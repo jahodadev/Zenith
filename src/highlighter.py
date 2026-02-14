@@ -27,7 +27,7 @@ class Highlighter(QSyntaxHighlighter):
 
     def highlightBlock(self, text):
         for pattern, format in self.rules:
-            match = pattern.globalMatch(text)
-            while match.hasNext():
-                match = match.next()
+            match_iterator = pattern.globalMatch(text)
+            while match_iterator.hasNext():
+                match = match_iterator.next()
                 self.setFormat(match.capturedStart(), match.capturedLength(), format)
