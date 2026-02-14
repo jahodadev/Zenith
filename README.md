@@ -1,6 +1,6 @@
-# Python Code Editor - Zenith
+# Code Editor - Zenith
 
-Projekt moderního, lehkého a vizuálně přitažlivého textového editoru určeného primárně pro programování v jazyce Python. Aplikace je postavena na frameworku **PySide6** a zaměřuje se na přehlednost a uživatelský komfort.
+Projekt moderního, lehkého a vizuálně přitažlivého textového editoru určeného primárně pro programování. Aplikace je postavena na frameworku **PySide6** a zaměřuje se na přehlednost a uživatelský komfort.
 
 ## Hlavní funkce (Specifikace)
 
