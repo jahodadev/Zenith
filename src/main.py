@@ -9,7 +9,6 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Nastavení okna
         self.setWindowTitle("Zenith - Code Editor")
         self.resize(1000, 700)
 
