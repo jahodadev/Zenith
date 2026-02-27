@@ -17,7 +17,7 @@ class MainWindow(QMainWindow):
         self.sidebar = Sidebar()
         self.editor = Editor()
 
-        self.sidebar.file_double_clicked.connect(self.editor.open_file)
+        self.sidebar.fileDoubleClicked.connect(self.editor.openFile)
 
         self.splitter.addWidget(self.sidebar)
         self.splitter.addWidget(self.editor)

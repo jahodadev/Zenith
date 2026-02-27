@@ -6,28 +6,28 @@ class Highlighter(QSyntaxHighlighter):
         super().__init__(parent)
         self.rules = []
 
-        keyword_format = QTextCharFormat()
-        keyword_format.setForeground(QColor("#ff79c6"))
-        keyword_format.setFontWeight(QFont.Bold)
+        keywordFormat = QTextCharFormat()
+        keywordFormat.setForeground(QColor("#ff79c6"))
+        keywordFormat.setFontWeight(QFont.Bold)
 
         keywords = ["def", "class", "import", "from", "if", "else", "return", "for", "while", "print"]
         for word in keywords:
             pattern = QRegularExpression(rf"\b{word}")
-            self.rules.append((pattern, keyword_format))
+            self.rules.append((pattern, keywordFormat))
         
-        comment_format = QTextCharFormat()
-        comment_format.setForeground(QColor("#6272a4"))
-        comment_format.setFontItalic(True)
-        self.rules.append((QRegularExpression(r"#[^\n]*"), comment_format))
+        commentFormat = QTextCharFormat()
+        commentFormat.setForeground(QColor("#6272a4"))
+        commentFormat.setFontItalic(True)
+        self.rules.append((QRegularExpression(r"#[^\n]*"), commentFormat))
 
-        string_format = QTextCharFormat()
-        string_format.setForeground(QColor("#f1fa8c"))
-        self.rules.append((QRegularExpression(r"\"[^\"]*\""), string_format))
-        self.rules.append((QRegularExpression(r"\'[^\']*\'"), string_format))
+        stringFormat = QTextCharFormat()
+        stringFormat.setForeground(QColor("#f1fa8c"))
+        self.rules.append((QRegularExpression(r"\"[^\"]*\""), stringFormat))
+        self.rules.append((QRegularExpression(r"\'[^\']*\'"), stringFormat))
 
     def highlightBlock(self, text):
         for pattern, format in self.rules:
-            match_iterator = pattern.globalMatch(text)
-            while match_iterator.hasNext():
-                match = match_iterator.next()
+            matchIterator = pattern.globalMatch(text)
+            while matchIterator.hasNext():
+                match = matchIterator.next()
                 self.setFormat(match.capturedStart(), match.capturedLength(), format)
