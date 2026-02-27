@@ -9,7 +9,6 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Nastavení okna
         self.setWindowTitle("Zenith - Code Editor")
         self.resize(1000, 700)
 
@@ -17,6 +16,8 @@ class MainWindow(QMainWindow):
 
         self.sidebar = Sidebar()
         self.editor = Editor()
+
+        self.sidebar.fileDoubleClicked.connect(self.editor.openFile)
 
         self.splitter.addWidget(self.sidebar)
         self.splitter.addWidget(self.editor)
