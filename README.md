@@ -36,7 +36,7 @@ Tento editor bude obsahovat následující klíčové vlastnosti:
 1. Naklonujte repozitář a přejděte do složky projektu:
    ```
    git clone https://github.com/jahodadev/Zenith.git
-   cd editor-va
+   cd Zenith
    ```
 
 2. Vytvořte a aktivujte virtuální prostředí:
@@ -48,7 +48,7 @@ Tento editor bude obsahovat následující klíčové vlastnosti:
 
 3. Nainstalujte závislosti:
    ```
-   pip install -r requirements.txt
+   python -m pip install -r requirements.txt
    ```
 
 4. Spusťte aplikaci:
