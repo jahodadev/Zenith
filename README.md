@@ -48,7 +48,7 @@ Tento editor bude obsahovat následující klíčové vlastnosti:
 
 3. Nainstalujte závislosti:
    ```
-    
+   pip install -r requirements.txt
    ```
 
 4. Spusťte aplikaci:
