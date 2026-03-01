@@ -22,12 +22,36 @@ Tento editor bude obsahovat následující klíčové vlastnosti:
 ## Struktura projektu
 
 * `src/` - Zdrojové kódy aplikace.
+  * `main.py` - Vstupní bod aplikace.
+  * `editor.py` - Komponenta textového editoru.
+  * `sidebar.py` - Postranní panel se stromem souborů.
+  * `highlighter.py` - Zvýrazňovač syntaxe.
+  * `file_delegate.py` - Delegát pro vykreslování položek v stromu souborů.
+  * `icons/` - Ikony používané v aplikaci.
 * `docs/` - Uživatelská dokumentace a další materiály.
 * `requirements.txt` - Seznam závislostí pro instalaci.
 
-## Jak spustit (TBA)
+## Jak spustit
 
-*Sekce bude doplněna*
+1. Naklonujte repozitář a přejděte do složky projektu:
+   ```
+   git clone https://github.com/jahodadev/editor-va.git
+   cd editor-va
+   ```
 
-1. Nainstalujte závislosti: `pip install -r requirements.txt`
-2. Spusťte hlavní soubor: `python src/main.py`
+2. Vytvořte a aktivujte virtuální prostředí:
+   ```
+   python -m venv venv
+   ```
+   - **Windows:** `venv\Scripts\activate`
+   - **Linux / macOS:** `source venv/bin/activate`
+
+3. Nainstalujte závislosti:
+   ```
+   pip install -r requirements.txt
+   ```
+
+4. Spusťte aplikaci:
+   ```
+   python src/main.py
+   ```
