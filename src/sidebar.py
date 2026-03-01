@@ -76,15 +76,15 @@ class Sidebar(QWidget):
 
         self.newFileButton.setStyleSheet("""
             QPushButton {
-                background-color: transparent; /* Bez pozadí, dokud nenajedeš */
-                color: #8be9fd; /* Světle modrá nebo bílá */
-                border-radius: 4px; /* Mírné zaoblení */
+                background-color: transparent; 
+                color: #8be9fd; 
+                border-radius: 4px; 
                 font-size: 16px;
                 font-weight: bold;
-                padding-bottom: 2px; /* Vycentrování pluska */
+                padding-bottom: 2px; 
             }
             QPushButton:hover {
-                background-color: #44475a; /* Zešedne/zesvětlá při najetí */
+                background-color: #44475a; 
             }
             QPushButton:pressed {
                 background-color: #6272a4;
