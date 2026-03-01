@@ -35,7 +35,7 @@ Tento editor bude obsahovat následující klíčové vlastnosti:
 
 1. Naklonujte repozitář a přejděte do složky projektu:
    ```
-   git clone https://github.com/jahodadev/editor-va.git
+   git clone https://github.com/jahodadev/Zenith.git
    cd editor-va
    ```
 
@@ -48,7 +48,7 @@ Tento editor bude obsahovat následující klíčové vlastnosti:
 
 3. Nainstalujte závislosti:
    ```
-   pip install -r requirements.txt
+    
    ```
 
 4. Spusťte aplikaci:
