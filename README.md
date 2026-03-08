@@ -48,10 +48,10 @@ Tento editor bude obsahovat následující klíčové vlastnosti:
 
 3. Nainstalujte závislosti:
    ```
-   python -m pip install -r requirements.txt
+   pip install .
    ```
 
 4. Spusťte aplikaci:
    ```
-   python src/main.py
+   zenith (nebo jako python modul: python -m zenith)
    ```

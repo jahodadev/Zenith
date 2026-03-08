@@ -1,13 +1,17 @@
 from PySide6.QtWidgets import QStyledItemDelegate
 from PySide6.QtGui import QIcon
 from PySide6.QtCore import QRect, Qt, Signal, QObject, QEvent
+import os
 
 class FileDelegate(QStyledItemDelegate):
     trashClicked = Signal(str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.trashIcon = QIcon("src/icons/trash.png")
+
+        currentDir = os.path.dirname(os.path.abspath(__file__))
+        iconPath = os.path.join(currentDir, "icons", "trash.png")
+        self.trashIcon = QIcon(iconPath)
 
     def paint(self, painter, option, index):
         super().paint(painter, option, index)

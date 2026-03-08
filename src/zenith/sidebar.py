@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QTreeView, QFileSystemModel, QMessageBox, QPushButton, QFileDialog, QInputDialog
 from PySide6.QtCore import QDir, Signal
-from file_delegate import FileDelegate
+from .file_delegate import FileDelegate
 import os
 
 class Sidebar(QWidget):

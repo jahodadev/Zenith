@@ -1,8 +1,8 @@
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QTextEdit, QSplitter
 from PySide6.QtCore import Qt
-from editor import Editor
-from sidebar import Sidebar
+from .editor import Editor
+from .sidebar import Sidebar
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -25,10 +25,13 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(self.splitter)
 
-if __name__ == "__main__":
+def main():
     app = QApplication(sys.argv)
-    
+
     window = MainWindow()
     window.show()
-    
+
     sys.exit(app.exec())
+
+if __name__ == "__main__":
+    main()

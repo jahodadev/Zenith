@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QTextEdit, QLabel, QFileDialog
 from PySide6.QtCore import Qt
-from highlighter import Highlighter
+from .highlighter import Highlighter
 import os
 
 class Editor(QWidget):
