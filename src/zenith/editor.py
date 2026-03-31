@@ -1,7 +1,79 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QTextEdit, QLabel, QFileDialog
-from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFileDialog, QPlainTextEdit
+from PySide6.QtGui import QPainter, QColor, QTextFormat
+from PySide6.QtCore import Qt, QRect
 from .highlighter import Highlighter
 import os
+
+class lineNumberArea(QWidget):
+    def __init__(self, editor):
+        super().__init__(editor)
+        self.codeEditor = editor
+
+    def sizeHint(self):
+        return self.codeEditor.lineNumberAreaSizeHint()
+
+    def paintEvent(self, event):
+        self.codeEditor.lineNumberAreaPaintEvent(event)
+
+class codeEditor(QPlainTextEdit):
+    def __init__(self):
+        super().__init__()
+        self.lineNumberArea = lineNumberArea(self)
+
+        self.blockCountChanged.connect(self.updateLineNumberAreaWidth)
+        self.updateRequest.connect(self.updateLineNumberArea)
+        
+        self.updateLineNumberAreaWidth(0)
+
+    def lineNumberAreaWidth(self):
+        digits = 1
+        maxValue = max(1, self.blockCount())
+        while maxValue >= 10:
+            maxValue /= 10
+            digits += 1
+        space = 3 + self.fontMetrics().horizontalAdvance('9') * digits
+        return space
+
+    def updateLineNumberAreaWidth(self, _):
+        self.setViewportMargins(self.lineNumberAreaWidth(), 0, 0, 0)
+
+    def updateLineNumberArea(self, rect, dy):
+        if dy:
+            self.lineNumberArea.scroll(0, dy)
+        else:
+            self.lineNumberArea.update(0, rect.y(), self.lineNumberArea.width(), rect.height())
+        if rect.contains(self.viewport().rect()):
+            self.updateLineNumberAreaWidth(0)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        cr = self.contentsRect()
+        self.lineNumberArea.setGeometry(
+            QRect(cr.left(), cr.top(), self.lineNumberAreaWidth(), cr.height())
+        )
+
+    def lineNumberAreaPaintEvent(self, event):
+        painter = QPainter(self.lineNumberArea)
+        painter.fillRect(event.rect(), QColor("#1e1f29"))
+
+        block = self.firstVisibleBlock()
+        blockNumber = block.blockNumber()
+        top = round(self.blockBoundingGeometry(block).translated(self.contentOffset()).top())
+        bottom = top + round(self.blockBoundingRect(block).height())
+
+        while block.isValid() and top <= event.rect().bottom():
+            if block.isVisible() and bottom >= event.rect().top():
+                number = str(blockNumber + 1)
+                painter.setPen(QColor("#6272a4"))
+                painter.drawText(
+                    0, top, self.lineNumberArea.width() - 2, self.fontMetrics().height(),
+                    Qt.AlignRight, number
+                )
+
+            block = block.next()
+            top = bottom
+            bottom = top + round(self.blockBoundingRect(block).height())
+            blockNumber += 1
 
 class Editor(QWidget):
     def __init__(self):
@@ -40,19 +112,20 @@ class Editor(QWidget):
         self.toolbarLayout.addStretch()
         self.toolbarLayout.addWidget(self.saveBtn)
 
-        self.textEdit = QTextEdit()
+        self.textEdit = codeEditor()
         self.textEdit.setPlaceholderText("Start coding here...")
         self.textEdit.setFrameStyle(0)
 
         self.highlighter = Highlighter(self.textEdit.document())
 
         self.textEdit.setStyleSheet("""
-            QTextEdit {
+            QPlainTextEdit {
                 background-color: #282a36;
                 color: #f8f8f2;
                 font-family: 'Consolas', 'Courier New', monospace;
                 font-size: 14px;
                 padding: 10px;
+                border: none;
             }
         """)
 
