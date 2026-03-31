@@ -24,6 +24,8 @@ class codeEditor(QPlainTextEdit):
         self.updateRequest.connect(self.updateLineNumberArea)
         
         self.updateLineNumberAreaWidth(0)
+        self.lineNumberArea.show()
+        self.lineNumberArea.raise_()
 
     def lineNumberAreaWidth(self):
         digits = 1
@@ -31,7 +33,7 @@ class codeEditor(QPlainTextEdit):
         while maxValue >= 10:
             maxValue /= 10
             digits += 1
-        space = 3 + self.fontMetrics().horizontalAdvance('9') * digits
+        space = 15 + self.fontMetrics().horizontalAdvance('9') * digits
         return space
 
     def updateLineNumberAreaWidth(self, _):
@@ -51,6 +53,7 @@ class codeEditor(QPlainTextEdit):
         self.lineNumberArea.setGeometry(
             QRect(cr.left(), cr.top(), self.lineNumberAreaWidth(), cr.height())
         )
+        self.lineNumberArea.raise_()
 
     def lineNumberAreaPaintEvent(self, event):
         painter = QPainter(self.lineNumberArea)
@@ -61,14 +64,15 @@ class codeEditor(QPlainTextEdit):
         top = round(self.blockBoundingGeometry(block).translated(self.contentOffset()).top())
         bottom = top + round(self.blockBoundingRect(block).height())
 
+        painter.setFont(self.font())
+
         while block.isValid() and top <= event.rect().bottom():
             if block.isVisible() and bottom >= event.rect().top():
                 number = str(blockNumber + 1)
-                painter.setPen(QColor("#f8f8f2"))
-                painter.drawText(
-                    0, top, self.lineNumberArea.width() - 2, self.fontMetrics().height(),
-                    Qt.AlignRight, number
-                )
+                painter.setPen(QColor("#8be9fd"))
+                
+                rect = QRect(0, top, self.lineNumberArea.width() - 5, self.fontMetrics().height())
+                painter.drawText(rect, Qt.AlignRight | Qt.AlignVCenter, number)
 
             block = block.next()
             top = bottom
