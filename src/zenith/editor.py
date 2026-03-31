@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFileDialog, QPlainTextEdit
 from PySide6.QtGui import QPainter, QColor, QTextFormat
-from PySide6.QtCore import Qt, QRect
+from PySide6.QtCore import Qt, QRect, QSize
 from .highlighter import Highlighter
 import os
 
@@ -10,7 +10,7 @@ class lineNumberArea(QWidget):
         self.codeEditor = editor
 
     def sizeHint(self):
-        return self.codeEditor.lineNumberAreaSizeHint()
+        return QSize(self.codeEditor.lineNumberAreaWidth(), 0)
 
     def paintEvent(self, event):
         self.codeEditor.lineNumberAreaPaintEvent(event)
@@ -54,7 +54,7 @@ class codeEditor(QPlainTextEdit):
 
     def lineNumberAreaPaintEvent(self, event):
         painter = QPainter(self.lineNumberArea)
-        painter.fillRect(event.rect(), QColor("#1e1f29"))
+        painter.fillRect(event.rect(), QColor("#282a36"))
 
         block = self.firstVisibleBlock()
         blockNumber = block.blockNumber()
@@ -64,7 +64,7 @@ class codeEditor(QPlainTextEdit):
         while block.isValid() and top <= event.rect().bottom():
             if block.isVisible() and bottom >= event.rect().top():
                 number = str(blockNumber + 1)
-                painter.setPen(QColor("#6272a4"))
+                painter.setPen(QColor("#f8f8f2"))
                 painter.drawText(
                     0, top, self.lineNumberArea.width() - 2, self.fontMetrics().height(),
                     Qt.AlignRight, number
@@ -124,7 +124,6 @@ class Editor(QWidget):
                 color: #f8f8f2;
                 font-family: 'Consolas', 'Courier New', monospace;
                 font-size: 14px;
-                padding: 10px;
                 border: none;
             }
         """)
