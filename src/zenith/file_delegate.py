@@ -1,7 +1,26 @@
 from PySide6.QtWidgets import QStyledItemDelegate
-from PySide6.QtGui import QIcon
+from PySide6.QtGui import QIcon, QImage, QColor, QPixmap
 from PySide6.QtCore import QRect, Qt, Signal, QObject, QEvent
 import os
+
+def createColoredIcon(iconPath, colorHex="#8be9fd"):
+    img = QImage(iconPath)
+    if img.isNull():
+        return QIcon()
+        
+    img = img.convertToFormat(QImage.Format_ARGB32)
+    targetColor = QColor(colorHex)
+    
+    for y in range(img.height()):
+        for x in range(img.width()):
+            c = img.pixelColor(x, y)
+            if c.alpha() > 200:
+                targetColor.setAlpha(255)
+                img.setPixelColor(x, y, targetColor)
+            else:
+                img.setPixelColor(x, y, QColor(0, 0, 0, 0))
+                
+    return QIcon(QPixmap.fromImage(img))
 
 class FileDelegate(QStyledItemDelegate):
     trashClicked = Signal(str)
@@ -10,8 +29,8 @@ class FileDelegate(QStyledItemDelegate):
         super().__init__(parent)
 
         currentDir = os.path.dirname(os.path.abspath(__file__))
-        iconPath = os.path.join(currentDir, "icons", "trash.png")
-        self.trashIcon = QIcon(iconPath)
+        iconPath = os.path.join(currentDir, "icons", "recycle-bin.png")
+        self.trashIcon = createColoredIcon(iconPath, "#ff5555")
 
     def paint(self, painter, option, index):
         super().paint(painter, option, index)

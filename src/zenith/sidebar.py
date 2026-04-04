@@ -1,10 +1,31 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QTreeView, QFileSystemModel, QMessageBox, QPushButton, QFileDialog, QInputDialog
-from PySide6.QtCore import QDir, Signal
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QTreeView, QFileSystemModel, QMessageBox, QPushButton, QFileDialog, QInputDialog, QLabel
+from PySide6.QtCore import QDir, Signal, QSize
+from PySide6.QtGui import QIcon, QImage, QColor, QPixmap
 from .file_delegate import FileDelegate
 import os
 
+def createColoredIcon(iconPath, colorHex="#8be9fd"):
+    img = QImage(iconPath)
+    if img.isNull():
+        return QIcon()
+        
+    img = img.convertToFormat(QImage.Format_ARGB32)
+    targetColor = QColor(colorHex)
+    
+    for y in range(img.height()):
+        for x in range(img.width()):
+            c = img.pixelColor(x, y)
+            if c.alpha() > 200:
+                targetColor.setAlpha(255)
+                img.setPixelColor(x, y, targetColor)
+            else:
+                img.setPixelColor(x, y, QColor(0, 0, 0, 0))
+                
+    return QIcon(QPixmap.fromImage(img))
+
 class Sidebar(QWidget):
     fileDoubleClicked = Signal(str)
+    saveFileClicked = Signal()
     
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -21,29 +42,62 @@ class Sidebar(QWidget):
 
         self.toolbarLayout = QHBoxLayout(self.toolbar)
         self.toolbarLayout.setContentsMargins(10, 0, 10, 0)
+        self.toolbarLayout.setSpacing(5)
 
-        self.openBtn = QPushButton("Open Folder")
-        self.openBtn.setFixedHeight(25)
-        self.openBtn.setStyleSheet("""
+        iconStyle = """
             QPushButton {
-                background-color: #44475a;
-                color: #f8f8f2;
-                border-radius: 4px;
-                font-weight: bold;
-                padding: 0 10px;
+                background: transparent; 
+                border: none;
+                color: #8be9fd; 
+                border-radius: 4px; 
+                padding: 2px;
             }
             QPushButton:hover {
+                background-color: #44475a; 
+            }
+            QPushButton:pressed {
                 background-color: #6272a4;
             }
-        """)
+        """
 
-        self.toolbarLayout.addWidget(self.openBtn)
+        baseDir = os.path.dirname(os.path.abspath(__file__))
+        iconsDir = os.path.join(baseDir, "icons")
+
+        self.newFileButton = QPushButton()
+        self.newFileButton.setIcon(createColoredIcon(os.path.join(iconsDir, "new-document.png")))
+        self.newFileButton.setIconSize(QSize(16, 16))
+        self.newFileButton.setFixedSize(22, 22)
+        self.newFileButton.setToolTip("New File")
+        self.newFileButton.setStyleSheet(iconStyle)
+
+        self.openFolderButton = QPushButton()
+        self.openFolderButton.setIcon(createColoredIcon(os.path.join(iconsDir, "folder.png")))
+        self.openFolderButton.setIconSize(QSize(16, 16))
+        self.openFolderButton.setFixedSize(22, 22)
+        self.openFolderButton.setToolTip("Open Folder")
+        self.openFolderButton.setStyleSheet(iconStyle)
+
+        self.saveFileButton = QPushButton()
+        self.saveFileButton.setIcon(createColoredIcon(os.path.join(iconsDir, "diskette.png")))
+        self.saveFileButton.setIconSize(QSize(16, 16))
+        self.saveFileButton.setFixedSize(22, 22)
+        self.saveFileButton.setToolTip("Save File")
+        self.saveFileButton.setStyleSheet(iconStyle)
+
+        self.toolbarLayout.addWidget(self.newFileButton)
+        self.toolbarLayout.addWidget(self.openFolderButton)
+        self.toolbarLayout.addWidget(self.saveFileButton)
         self.toolbarLayout.addStretch()
 
         self.layout.addWidget(self.toolbar)
 
         self.model = QFileSystemModel()
         self.model.setRootPath(QDir.currentPath())
+
+        currentFolderName = os.path.basename(QDir.currentPath())
+        self.folderLabel = QLabel(currentFolderName.upper())
+        self.folderLabel.setStyleSheet("color: #6272a4; font-size: 11px; font-weight: bold; padding: 10px 10px 5px 10px; margin: 0px; background-color: #1e1f29; border: none;")
+        self.layout.addWidget(self.folderLabel)
 
         self.tree = QTreeView()
         self.tree.setModel(self.model)
@@ -57,48 +111,16 @@ class Sidebar(QWidget):
         self.tree.setItemDelegate(self.delegate)
         self.delegate.trashClicked.connect(self.deleteFile)
 
-        self.setStyleSheet("background-color: #2c2c2c; color: white;")
+        self.setStyleSheet("background-color: #1e1f29; color: white;")
+        self.tree.setStyleSheet("QTreeView { background-color: #1e1f29; color: white; border: none; }")
 
         self.tree.doubleClicked.connect(self.onDoubleClick)
-        self.openBtn.clicked.connect(self.chooseFolder)
-
-        self.fileOpsBar = QWidget()
-        self.fileOpsBar.setFixedHeight(30)
-        self.fileOpsBar.setStyleSheet("background-color: #21222c;")
-
-        self.fileOpsLayout = QHBoxLayout(self.fileOpsBar)
-        self.fileOpsLayout.setContentsMargins(10, 0, 10, 0)
-        self.fileOpsLayout.setSpacing(5)
-
-        self.newFileButton = QPushButton("+")
-        self.newFileButton.setFixedSize(22, 22)
-        self.newFileButton.setToolTip("New File")
-
-        self.newFileButton.setStyleSheet("""
-            QPushButton {
-                background-color: transparent; 
-                color: #8be9fd; 
-                border-radius: 4px; 
-                font-size: 16px;
-                font-weight: bold;
-                padding-bottom: 2px; 
-            }
-            QPushButton:hover {
-                background-color: #44475a; 
-            }
-            QPushButton:pressed {
-                background-color: #6272a4;
-            }
-        """)
-
-        self.fileOpsLayout.addWidget(self.newFileButton)
-
-        self.fileOpsLayout.addStretch()
-        self.layout.addWidget(self.fileOpsBar)
+        
+        self.newFileButton.clicked.connect(self.createNewFile)
+        self.openFolderButton.clicked.connect(self.chooseFolder)
+        self.saveFileButton.clicked.connect(self.saveFileClicked.emit)
 
         self.layout.addWidget(self.tree)
-
-        self.newFileButton.clicked.connect(self.createNewFile)
 
     def onDoubleClick(self, index):
         filePath = self.model.filePath(index)
@@ -124,6 +146,7 @@ class Sidebar(QWidget):
         if folderPath:
             self.model.setRootPath(folderPath)
             self.tree.setRootIndex(self.model.index(folderPath))
+            self.folderLabel.setText(os.path.basename(folderPath).upper())
 
     def createNewFile(self):
         indexes = self.tree.selectedIndexes()

@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFileDialog, QPlainTextEdit
-from PySide6.QtGui import QPainter, QColor, QTextFormat
+from PySide6.QtGui import QPainter, QColor, QTextFormat, QAction, QKeySequence
 from PySide6.QtCore import Qt, QRect, QSize
 from .highlighter import Highlighter
 import os
@@ -57,7 +57,7 @@ class codeEditor(QPlainTextEdit):
 
     def lineNumberAreaPaintEvent(self, event):
         painter = QPainter(self.lineNumberArea)
-        painter.fillRect(event.rect(), QColor("#282a36"))
+        painter.fillRect(event.rect(), QColor("#1c1d26"))
 
         block = self.firstVisibleBlock()
         blockNumber = block.blockNumber()
@@ -98,23 +98,8 @@ class Editor(QWidget):
         self.fileLabel = QLabel("untitled.py")
         self.fileLabel.setStyleSheet("color: #6272a4; font-size: 12px;")
 
-        self.saveBtn = QPushButton("Save")
-        self.saveBtn.setFixedSize(60, 25)
-        self.saveBtn.setStyleSheet("""
-            QPushButton {
-                background-color: #44475a;
-                color: #f8f8f2;
-                border-radius: 4px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #6272a4;
-            }
-        """)
-
         self.toolbarLayout.addWidget(self.fileLabel)
         self.toolbarLayout.addStretch()
-        self.toolbarLayout.addWidget(self.saveBtn)
 
         self.textEdit = codeEditor()
         self.textEdit.setPlaceholderText("Start coding here...")
@@ -124,7 +109,7 @@ class Editor(QWidget):
 
         self.textEdit.setStyleSheet("""
             QPlainTextEdit {
-                background-color: #282a36;
+                background-color: #1c1d26;
                 color: #f8f8f2;
                 font-family: 'Consolas', 'Courier New', monospace;
                 font-size: 14px;
@@ -135,14 +120,30 @@ class Editor(QWidget):
         self.mainLayout.addWidget(self.toolbar)
         self.mainLayout.addWidget(self.textEdit)
 
-        self.saveBtn.clicked.connect(self.saveFile)
+        self.saveAction = QAction(self)
+        self.saveAction.setShortcut(QKeySequence("Ctrl+S"))
+        self.addAction(self.saveAction)
+        self.saveAction.triggered.connect(self.saveFile)
 
-        def updateHeader(self):
-            if self.currentFile:
-                name = os.path.basename(self.currentFile)
-                self.fileLabel.setText(name)
-            else:
-                self.fileLabel.setText("untitled.py")
+        self.openFolderAction = QAction(self)
+        self.openFolderAction.setShortcut(QKeySequence("Ctrl+O"))
+        self.addAction(self.openFolderAction)
+        self.openFolderAction.triggered.connect(self.openFolder)
+
+        self.newFileAction = QAction(self)
+        self.newFileAction.setShortcut(QKeySequence("Ctrl+N"))
+        self.addAction(self.newFileAction)
+        self.newFileAction.triggered.connect(self.newFile)
+
+    def newFile(self):
+        self.currentFile = None
+        self.textEdit.clear()
+        self.updateHeader()
+
+    def openFolder(self):
+        dirPath = QFileDialog.getExistingDirectory(self, "Open Folder")
+        if dirPath:
+            print(f"Opened folder: {dirPath}")
 
     def saveFile(self):
         if not self.currentFile:
@@ -162,10 +163,10 @@ class Editor(QWidget):
                 f.write(self.textEdit.toPlainText())
             
             self.updateHeader()
-            print(f"Uloženo do: {self.currentFile}")
+            print(f"Saved to: {self.currentFile}")
             
         except Exception as e:
-            print(f"Chyba při ukládání: {e}")
+            print(f"Error while saving: {e}")
 
     def openFile(self, filePath):
         try:
@@ -175,13 +176,13 @@ class Editor(QWidget):
             self.textEdit.setPlainText(content)
             self.currentFile = filePath
             self.updateHeader()
-            print(f"Otevřeno: {filePath}")
+            print(f"Opened: {filePath}")
         except Exception as e:
-            print(f"Chyba při otevírání: {e}")
+            print(f"Error while opening: {e}")
 
     def updateHeader(self):
         if self.currentFile:
             name = os.path.basename(self.currentFile)
             self.fileLabel.setText(name)
         else:
-            self.fileLabel.setText("Untilted file")
+            self.fileLabel.setText("untitled.py")

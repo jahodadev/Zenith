@@ -17,11 +17,14 @@ class MainWindow(QMainWindow):
         self.editor = Editor()
 
         self.sidebar.fileDoubleClicked.connect(self.editor.openFile)
+        self.sidebar.saveFileClicked.connect(self.editor.saveFile)
 
         self.splitter.addWidget(self.sidebar)
         self.splitter.addWidget(self.editor)
 
         self.splitter.setSizes([200, 800])
+        self.splitter.setHandleWidth(1)
+        self.splitter.setStyleSheet("QSplitter::handle { background-color: #191a21; }")
 
         self.setCentralWidget(self.splitter)
 
