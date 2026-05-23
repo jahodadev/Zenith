@@ -26,6 +26,7 @@ def createColoredIcon(iconPath, colorHex="#8be9fd"):
 class Sidebar(QWidget):
     fileDoubleClicked = Signal(str)
     saveFileClicked = Signal()
+    settingsClicked = Signal()
     
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -84,10 +85,18 @@ class Sidebar(QWidget):
         self.saveFileButton.setToolTip("Save File")
         self.saveFileButton.setStyleSheet(iconStyle)
 
+        self.settingsButton = QPushButton()
+        self.settingsButton.setIcon(createColoredIcon(os.path.join(iconsDir, "settings.png")))
+        self.settingsButton.setIconSize(QSize(16, 16))
+        self.settingsButton.setFixedSize(22, 22)
+        self.settingsButton.setToolTip("Settings")
+        self.settingsButton.setStyleSheet(iconStyle)
+
         self.toolbarLayout.addWidget(self.newFileButton)
         self.toolbarLayout.addWidget(self.openFolderButton)
         self.toolbarLayout.addWidget(self.saveFileButton)
         self.toolbarLayout.addStretch()
+        self.toolbarLayout.addWidget(self.settingsButton)
 
         self.layout.addWidget(self.toolbar)
 
@@ -119,6 +128,7 @@ class Sidebar(QWidget):
         self.newFileButton.clicked.connect(self.createNewFile)
         self.openFolderButton.clicked.connect(self.chooseFolder)
         self.saveFileButton.clicked.connect(self.saveFileClicked.emit)
+        self.settingsButton.clicked.connect(self.settingsClicked.emit)
 
         self.layout.addWidget(self.tree)
 
@@ -163,7 +173,7 @@ class Sidebar(QWidget):
         if fileName and ok:
             filePath = os.path.join(targetDir, fileName)
             try:
-                with open(filePath, "w", encoding="utf-8") as f:
+                with open(filePath, "w", encoding="utf-8"):
                     print(f"File was successfully created: {filePath}")
             except Exception as e:
                 print(f"Error while creating a new file: {e}")

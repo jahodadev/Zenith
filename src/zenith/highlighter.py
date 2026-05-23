@@ -1,49 +1,47 @@
 from PySide6.QtGui import QSyntaxHighlighter, QTextCharFormat, QColor, QFont
-from PySide6.QtCore import QRegularExpression, Qt
+from .themes import THEMES
+from .lexer import tokenize_document, KEYWORD, NAME, NUMBER, STRING, COMMENT, OPERATOR
 
 class Highlighter(QSyntaxHighlighter):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.rules = []
+        self._formats = {}
+        self._tokens_by_line = {}
+        self._reparsing = False
+        self.applyTheme(THEMES["dracula"])
+        self.document().contentsChanged.connect(self._reparse)
 
-        keywordFormat = QTextCharFormat()
-        keywordFormat.setForeground(QColor("#ff79c6"))
-        keywordFormat.setFontWeight(QFont.Bold)
+    def applyTheme(self, theme):
+        def fmt(color, bold=False, italic=False):
+            f = QTextCharFormat()
+            f.setForeground(QColor(color))
+            if bold:
+                f.setFontWeight(QFont.Bold)
+            if italic:
+                f.setFontItalic(True)
+            return f
 
-        keywords = ["def", "class", "import", "from", "if", "elif", "else", "try", "except", "finally", "return", "for", "while", "print", "pass", "break", "continue", "with", "as"]
-        for word in keywords:
-            pattern = QRegularExpression(rf"\b{word}\b")
-            self.rules.append((pattern, keywordFormat, 0))
+        self._formats = {
+            KEYWORD:  fmt(theme["keyword"], bold=True),
+            NAME:     fmt(theme["function_name"]),
+            NUMBER:   fmt(theme["number"]),
+            STRING:   fmt(theme["string"]),
+            COMMENT:  fmt(theme["comment"], italic=True),
+            OPERATOR: fmt(theme["operator"]),
+        }
+        self._reparse()
 
-        nameFormat = QTextCharFormat()
-        nameFormat.setForeground(QColor("#50fa7b")) 
-        self.rules.append((QRegularExpression(r"\bclass\s+([A-Za-z_0-9]+)"), nameFormat, 1))
-        self.rules.append((QRegularExpression(r"\bdef\s+([A-Za-z_0-9]+)"), nameFormat, 1))
+    def _reparse(self):
+        if self._reparsing:
+            return
+        self._reparsing = True
+        text = self.document().toPlainText()
+        self._tokens_by_line = tokenize_document(text)
+        self.rehighlight()
+        self._reparsing = False
 
-        numberFormat = QTextCharFormat()
-        numberFormat.setForeground(QColor("#bd93f9")) 
-        self.rules.append((QRegularExpression(r"\b[0-9]+(\.[0-9]+)?\b"), numberFormat, 0))
-
-        operatorFormat = QTextCharFormat()
-        operatorFormat.setForeground(QColor("#ff79c6")) 
-        self.rules.append((QRegularExpression(r"[\+\-\*\/\=\<\>\!\%\&\|\^]"), operatorFormat, 0))
-
-        stringFormat = QTextCharFormat()
-        stringFormat.setForeground(QColor("#f1fa8c"))
-        self.rules.append((QRegularExpression(r"\"[^\"]*\""), stringFormat, 0))
-        self.rules.append((QRegularExpression(r"\'[^\']*\'"), stringFormat, 0))
-
-        commentFormat = QTextCharFormat()
-        commentFormat.setForeground(QColor("#6272a4"))
-        commentFormat.setFontItalic(True)
-        self.rules.append((QRegularExpression(r"#[^\n]*"), commentFormat, 0))
-
-        self.docstringFormat = QTextCharFormat()
-        self.docstringFormat.setForeground(QColor("#f1fa8c"))
-
-    def highlightBlock(self, text):
-        for pattern, format, group in self.rules:
-            matchIterator = pattern.globalMatch(text)
-            while matchIterator.hasNext():
-                match = matchIterator.next()
-                self.setFormat(match.capturedStart(), match.capturedLength(), format)
+    def highlightBlock(self, _text):
+        line = self.currentBlock().blockNumber()
+        for token_type, start, length in self._tokens_by_line.get(line, []):
+            if token_type in self._formats:
+                self.setFormat(start, length, self._formats[token_type])

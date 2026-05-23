@@ -1,9 +1,12 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QTextEdit, QSplitter, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QApplication, QMainWindow, QSplitter, QWidget, QVBoxLayout
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction, QKeySequence
 from .editor import Editor
 from .sidebar import Sidebar
+from .settings_manager import SettingsManager
+from .settings_dialog import SettingsDialog
+from .themes import THEMES
 
 class EditorArea(QWidget):
     def __init__(self):
@@ -15,18 +18,23 @@ class EditorArea(QWidget):
         self.splitter = QSplitter(Qt.Horizontal)
         self.splitter.setHandleWidth(1)
         self.splitter.setStyleSheet(
-            "QSplitter::handle {background-color: #191a21;}"
+            "QSplitter::handle { background-color: #191a21; }"
         )
         layout.addWidget(self.splitter)
 
         self.editors = []
-
+        self._currentShortcuts = None
+        self._currentTheme = None
         self.addEditor()
 
     def addEditor(self):
         editor = Editor()
         self.editors.append(editor)
         self.splitter.addWidget(editor)
+        if self._currentShortcuts:
+            editor.applyShortcuts(self._currentShortcuts)
+        if self._currentTheme:
+            editor.applyTheme(self._currentTheme)
         count = len(self.editors)
         self.splitter.setSizes([1000 // count] * count)
         return editor
@@ -49,6 +57,19 @@ class EditorArea(QWidget):
         if editor:
             editor.saveFile()
 
+    def applyShortcuts(self, shortcuts):
+        self._currentShortcuts = shortcuts
+        for editor in self.editors:
+            editor.applyShortcuts(shortcuts)
+
+    def applyTheme(self, theme):
+        self._currentTheme = theme
+        self.splitter.setStyleSheet(
+            f"QSplitter::handle {{ background-color: {theme['border']}; }}"
+        )
+        for editor in self.editors:
+            editor.applyTheme(theme)
+
     def _getActiveEditor(self):
         for editor in self.editors:
             if editor.textEdit.hasFocus():
@@ -63,19 +84,22 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.settings = SettingsManager()
+
         self.setWindowTitle("Zenith - Code Editor")
         self.resize(1000, 700)
 
         self.splitter = QSplitter(Qt.Horizontal)
 
         self.sidebar = Sidebar()
-        self.editor = EditorArea()
+        self.editorArea = EditorArea()
 
-        self.sidebar.fileDoubleClicked.connect(self.editor.openFile)
-        self.sidebar.saveFileClicked.connect(self.editor.saveFile)
+        self.sidebar.fileDoubleClicked.connect(self.editorArea.openFile)
+        self.sidebar.saveFileClicked.connect(self.editorArea.saveFile)
+        self.sidebar.settingsClicked.connect(self.openSettings)
 
         self.splitter.addWidget(self.sidebar)
-        self.splitter.addWidget(self.editor)
+        self.splitter.addWidget(self.editorArea)
 
         self.splitter.setSizes([200, 800])
         self.splitter.setHandleWidth(1)
@@ -83,15 +107,48 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(self.splitter)
 
-        splitAction = QAction(self)
-        splitAction.setShortcut(QKeySequence("Ctrl+E"))
-        splitAction.triggered.connect(self.editor.addEditor)
-        self.addAction(splitAction)
+        self.splitAction = QAction(self)
+        self.splitAction.triggered.connect(self.editorArea.addEditor)
+        self.addAction(self.splitAction)
 
-        closeAction = QAction(self)
-        closeAction.setShortcut(QKeySequence("Ctrl+W"))
-        closeAction.triggered.connect(self.editor.closeActiveEditor)
-        self.addAction(closeAction)
+        self.closeAction = QAction(self)
+        self.closeAction.triggered.connect(self.editorArea.closeActiveEditor)
+        self.addAction(self.closeAction)
+
+        self._applySettings()
+
+    def openSettings(self):
+        dialog = SettingsDialog(self.settings, self)
+        if dialog.exec():
+            self._applySettings()
+
+    def _applySettings(self):
+        shortcuts = self.settings.get("shortcuts")
+        self.splitAction.setShortcut(QKeySequence(shortcuts.get("split_editor", "Ctrl+E")))
+        self.closeAction.setShortcut(QKeySequence(shortcuts.get("close_split", "Ctrl+W")))
+        self.editorArea.applyShortcuts(shortcuts)
+
+        themeKey = self.settings.get("theme")
+        theme = THEMES.get(themeKey, THEMES["dracula"])
+        self.editorArea.applyTheme(theme)
+        self.sidebar.setStyleSheet(
+            f"background-color: {theme['sidebar_bg']}; color: {theme['foreground']};"
+        )
+        self.sidebar.folderLabel.setStyleSheet(
+            f"color: {theme['comment']}; font-size: 11px; font-weight: bold;"
+            f" padding: 10px 10px 5px 10px; margin: 0px;"
+            f" background-color: {theme['sidebar_bg']}; border: none;"
+        )
+        self.sidebar.tree.setStyleSheet(
+            f"QTreeView {{ background-color: {theme['sidebar_bg']}; color: {theme['foreground']}; border: none; }}"
+        )
+        self.sidebar.toolbar.setStyleSheet(
+            f"background-color: {theme['toolbar_bg']}; border-bottom: 1px solid {theme['border']};"
+        )
+        self.splitter.setStyleSheet(
+            f"QSplitter::handle {{ background-color: {theme['border']}; }}"
+        )
+
 
 def main():
     app = QApplication(sys.argv)

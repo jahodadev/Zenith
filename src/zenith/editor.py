@@ -1,7 +1,8 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QFileDialog, QPlainTextEdit
-from PySide6.QtGui import QPainter, QColor, QTextFormat, QAction, QKeySequence
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFileDialog, QPlainTextEdit
+from PySide6.QtGui import QPainter, QColor, QAction, QKeySequence
 from PySide6.QtCore import Qt, QRect, QSize
 from .highlighter import Highlighter
+from .themes import THEMES
 import os
 
 class lineNumberArea(QWidget):
@@ -19,10 +20,11 @@ class codeEditor(QPlainTextEdit):
     def __init__(self):
         super().__init__()
         self.lineNumberArea = lineNumberArea(self)
+        self._theme = THEMES["dracula"]
 
         self.blockCountChanged.connect(self.updateLineNumberAreaWidth)
         self.updateRequest.connect(self.updateLineNumberArea)
-        
+
         self.updateLineNumberAreaWidth(0)
         self.lineNumberArea.show()
         self.lineNumberArea.raise_()
@@ -57,7 +59,7 @@ class codeEditor(QPlainTextEdit):
 
     def lineNumberAreaPaintEvent(self, event):
         painter = QPainter(self.lineNumberArea)
-        painter.fillRect(event.rect(), QColor("#1c1d26"))
+        painter.fillRect(event.rect(), QColor(self._theme["line_number_bg"]))
 
         block = self.firstVisibleBlock()
         blockNumber = block.blockNumber()
@@ -69,8 +71,7 @@ class codeEditor(QPlainTextEdit):
         while block.isValid() and top <= event.rect().bottom():
             if block.isVisible() and bottom >= event.rect().top():
                 number = str(blockNumber + 1)
-                painter.setPen(QColor("#8be9fd"))
-                
+                painter.setPen(QColor(self._theme["line_number_fg"]))
                 rect = QRect(0, top, self.lineNumberArea.width() - 5, self.fontMetrics().height())
                 painter.drawText(rect, Qt.AlignRight | Qt.AlignVCenter, number)
 
@@ -79,11 +80,25 @@ class codeEditor(QPlainTextEdit):
             bottom = top + round(self.blockBoundingRect(block).height())
             blockNumber += 1
 
+    def applyTheme(self, theme):
+        self._theme = theme
+        self.setStyleSheet(f"""
+            QPlainTextEdit {{
+                background-color: {theme["background"]};
+                color: {theme["foreground"]};
+                font-family: 'Consolas', 'Courier New', monospace;
+                font-size: 14px;
+                border: none;
+            }}
+        """)
+        self.lineNumberArea.update()
+
 class Editor(QWidget):
     def __init__(self):
         super().__init__()
         self.currentFile = None
-        
+        self._theme = THEMES["dracula"]
+
         self.mainLayout = QVBoxLayout(self)
         self.mainLayout.setContentsMargins(0, 0, 0, 0)
         self.mainLayout.setSpacing(0)
@@ -121,19 +136,30 @@ class Editor(QWidget):
         self.mainLayout.addWidget(self.textEdit)
 
         self.saveAction = QAction(self)
-        self.saveAction.setShortcut(QKeySequence("Ctrl+S"))
         self.addAction(self.saveAction)
         self.saveAction.triggered.connect(self.saveFile)
 
         self.openFolderAction = QAction(self)
-        self.openFolderAction.setShortcut(QKeySequence("Ctrl+O"))
         self.addAction(self.openFolderAction)
         self.openFolderAction.triggered.connect(self.openFolder)
 
         self.newFileAction = QAction(self)
-        self.newFileAction.setShortcut(QKeySequence("Ctrl+N"))
         self.addAction(self.newFileAction)
         self.newFileAction.triggered.connect(self.newFile)
+
+    def applyShortcuts(self, shortcuts):
+        self.saveAction.setShortcut(QKeySequence(shortcuts.get("save", "Ctrl+S")))
+        self.openFolderAction.setShortcut(QKeySequence(shortcuts.get("open_folder", "Ctrl+O")))
+        self.newFileAction.setShortcut(QKeySequence(shortcuts.get("new_file", "Ctrl+N")))
+
+    def applyTheme(self, theme):
+        self._theme = theme
+        self.toolbar.setStyleSheet(
+            f"background-color: {theme['toolbar_bg']}; border-bottom: 1px solid {theme['border']};"
+        )
+        self.fileLabel.setStyleSheet(f"color: {theme['comment']}; font-size: 12px;")
+        self.textEdit.applyTheme(theme)
+        self.highlighter.applyTheme(theme)
 
     def newFile(self):
         self.currentFile = None
@@ -148,9 +174,9 @@ class Editor(QWidget):
     def saveFile(self):
         if not self.currentFile:
             filePath, _ = QFileDialog.getSaveFileName(
-                self, 
-                "Save File", 
-                "", 
+                self,
+                "Save File",
+                "",
                 "Python Files (*.py);;All Files (*)"
             )
             if filePath:
@@ -161,10 +187,7 @@ class Editor(QWidget):
         try:
             with open(self.currentFile, "w", encoding="utf-8") as f:
                 f.write(self.textEdit.toPlainText())
-            
             self.updateHeader()
-            print(f"Saved to: {self.currentFile}")
-            
         except Exception as e:
             print(f"Error while saving: {e}")
 
@@ -172,11 +195,9 @@ class Editor(QWidget):
         try:
             with open(filePath, "r", encoding="utf-8") as f:
                 content = f.read()
-
             self.textEdit.setPlainText(content)
             self.currentFile = filePath
             self.updateHeader()
-            print(f"Opened: {filePath}")
         except Exception as e:
             print(f"Error while opening: {e}")
 
