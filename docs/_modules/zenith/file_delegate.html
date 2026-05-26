@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>zenith.file_delegate &#8212; zenith  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for zenith.file_delegate</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Delegát pro položky stromu souborů s ikonou pro mazání.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">QStyledItemDelegate</span><span class="p">,</span> <span class="n">QStyleOptionViewItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtGui</span><span class="w"> </span><span class="kn">import</span> <span class="n">QIcon</span><span class="p">,</span> <span class="n">QImage</span><span class="p">,</span> <span class="n">QColor</span><span class="p">,</span> <span class="n">QPixmap</span><span class="p">,</span> <span class="n">QPainter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">QRect</span><span class="p">,</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">Signal</span><span class="p">,</span> <span class="n">QEvent</span><span class="p">,</span> <span class="n">QModelIndex</span><span class="p">,</span> <span class="n">QAbstractItemModel</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+
+<div class="viewcode-block" id="createColoredIcon">
+<a class="viewcode-back" href="../../zenith.html#zenith.file_delegate.createColoredIcon">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">createColoredIcon</span><span class="p">(</span><span class="n">iconPath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">colorHex</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#8be9fd&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QIcon</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Načte PNG ikonu a přebarví její neprůhledné pixely na zadanou barvu.&quot;&quot;&quot;</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">QImage</span><span class="p">(</span><span class="n">iconPath</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">isNull</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">QIcon</span><span class="p">()</span>
+
+    <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">convertToFormat</span><span class="p">(</span><span class="n">QImage</span><span class="o">.</span><span class="n">Format_ARGB32</span><span class="p">)</span>
+    <span class="n">targetColor</span> <span class="o">=</span> <span class="n">QColor</span><span class="p">(</span><span class="n">colorHex</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">height</span><span class="p">()):</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">width</span><span class="p">()):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">pixelColor</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">alpha</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">200</span><span class="p">:</span>
+                <span class="n">targetColor</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
+                <span class="n">img</span><span class="o">.</span><span class="n">setPixelColor</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">targetColor</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">img</span><span class="o">.</span><span class="n">setPixelColor</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">QColor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">QIcon</span><span class="p">(</span><span class="n">QPixmap</span><span class="o">.</span><span class="n">fromImage</span><span class="p">(</span><span class="n">img</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="FileDelegate">
+<a class="viewcode-back" href="../../zenith.html#zenith.file_delegate.FileDelegate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FileDelegate</span><span class="p">(</span><span class="n">QStyledItemDelegate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Zobrazuje ikonu koše u každé položky ve stromu souborů.</span>
+
+<span class="sd">    Při kliknutí na ikonu emituje signál trashClicked s cestou k souboru.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">trashClicked</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+
+        <span class="n">currentDir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+        <span class="n">iconPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">currentDir</span><span class="p">,</span> <span class="s2">&quot;icons&quot;</span><span class="p">,</span> <span class="s2">&quot;recycle-bin.png&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trashIcon</span> <span class="o">=</span> <span class="n">createColoredIcon</span><span class="p">(</span><span class="n">iconPath</span><span class="p">,</span> <span class="s2">&quot;#ff5555&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FileDelegate.paint">
+<a class="viewcode-back" href="../../zenith.html#zenith.file_delegate.FileDelegate.paint">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">paint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">painter</span><span class="p">:</span> <span class="n">QPainter</span><span class="p">,</span> <span class="n">option</span><span class="p">:</span> <span class="n">QStyleOptionViewItem</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">QModelIndex</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Vykreslí řádek a přidá ikonu koše na pravý okraj.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">paint</span><span class="p">(</span><span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">option</span><span class="o">.</span><span class="n">rect</span>
+            <span class="n">iconSize</span> <span class="o">=</span> <span class="mi">16</span>
+            <span class="n">margin</span> <span class="o">=</span> <span class="mi">4</span>
+            <span class="n">iconRect</span> <span class="o">=</span> <span class="n">QRect</span><span class="p">(</span>
+                <span class="n">rect</span><span class="o">.</span><span class="n">right</span><span class="p">()</span> <span class="o">-</span> <span class="n">iconSize</span> <span class="o">-</span> <span class="n">margin</span><span class="p">,</span>
+                <span class="n">rect</span><span class="o">.</span><span class="n">center</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">-</span> <span class="n">iconSize</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="n">iconSize</span><span class="p">,</span>
+                <span class="n">iconSize</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trashIcon</span><span class="o">.</span><span class="n">paint</span><span class="p">(</span><span class="n">painter</span><span class="p">,</span> <span class="n">iconRect</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FileDelegate.editorEvent">
+<a class="viewcode-back" href="../../zenith.html#zenith.file_delegate.FileDelegate.editorEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">editorEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QEvent</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">QAbstractItemModel</span><span class="p">,</span> <span class="n">option</span><span class="p">:</span> <span class="n">QStyleOptionViewItem</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">QModelIndex</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Zachytí klik na ikonu koše a emituje trashClicked.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QEvent</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">MouseButtonRelease</span> <span class="ow">and</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">option</span><span class="o">.</span><span class="n">rect</span>
+            <span class="n">iconSize</span> <span class="o">=</span> <span class="mi">16</span>
+            <span class="n">margin</span> <span class="o">=</span> <span class="mi">4</span>
+            <span class="n">iconRect</span> <span class="o">=</span> <span class="n">QRect</span><span class="p">(</span>
+                <span class="n">rect</span><span class="o">.</span><span class="n">right</span><span class="p">()</span> <span class="o">-</span> <span class="n">iconSize</span> <span class="o">-</span> <span class="n">margin</span><span class="p">,</span>
+                <span class="n">rect</span><span class="o">.</span><span class="n">center</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">-</span> <span class="n">iconSize</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="n">iconSize</span><span class="p">,</span>
+                <span class="n">iconSize</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">iconRect</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">pos</span><span class="p">()):</span>
+                <span class="n">filePath</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">filePath</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">trashClicked</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">editorEvent</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">zenith</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../zenith.html">zenith package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Author.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

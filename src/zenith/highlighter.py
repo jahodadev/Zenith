@@ -1,18 +1,26 @@
+"""Syntaktický zvýrazňovač pro Python kód."""
+
+from __future__ import annotations
+
 from PySide6.QtGui import QSyntaxHighlighter, QTextCharFormat, QColor, QFont
 from .themes import THEMES
 from .lexer import tokenize_document, KEYWORD, NAME, NUMBER, STRING, COMMENT, OPERATOR
 
+
 class Highlighter(QSyntaxHighlighter):
+    """Zvýrazňuje Python tokeny barvami z aktuálního tématu."""
+
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._formats = {}
-        self._tokens_by_line = {}
+        self._formats: dict[str, QTextCharFormat] = {}
+        self._tokens_by_line: dict[int, list[tuple[str, int, int]]] = {}
         self._reparsing = False
         self.applyTheme(THEMES["dracula"])
         self.document().contentsChanged.connect(self._reparse)
 
-    def applyTheme(self, theme):
-        def fmt(color, bold=False, italic=False):
+    def applyTheme(self, theme: dict[str, str]) -> None:
+        """Přestaví formáty barev podle nového tématu a znovu zvýrazní dokument."""
+        def fmt(color: str, bold: bool = False, italic: bool = False) -> QTextCharFormat:
             f = QTextCharFormat()
             f.setForeground(QColor(color))
             if bold:
@@ -31,7 +39,8 @@ class Highlighter(QSyntaxHighlighter):
         }
         self._reparse()
 
-    def _reparse(self):
+    def _reparse(self) -> None:
+        """Znovu tokenizuje celý dokument. Obsahuje ochranu proti zacyklení."""
         if self._reparsing:
             return
         self._reparsing = True
@@ -40,7 +49,8 @@ class Highlighter(QSyntaxHighlighter):
         self.rehighlight()
         self._reparsing = False
 
-    def highlightBlock(self, _text):
+    def highlightBlock(self, _text: str) -> None:
+        """Aplikuje uložené formáty na aktuální blok textu."""
         line = self.currentBlock().blockNumber()
         for token_type, start, length in self._tokens_by_line.get(line, []):
             if token_type in self._formats:

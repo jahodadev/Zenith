@@ -1,9 +1,20 @@
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QTabWidget, QWidget, QLabel, QRadioButton, QButtonGroup, QTableWidget, QTableWidgetItem, QPushButton, QHeaderView
+"""Dialog nastavení s záložkami pro témata a klávesové zkratky."""
+
+from __future__ import annotations
+
+from PySide6.QtWidgets import (
+    QDialog, QVBoxLayout, QHBoxLayout, QTabWidget, QWidget,
+    QRadioButton, QButtonGroup, QTableWidget, QTableWidgetItem,
+    QPushButton, QHeaderView
+)
 from PySide6.QtGui import QColor
 from PySide6.QtCore import Qt
 from .themes import THEMES
 
+
 class SettingsDialog(QDialog):
+    """Modální dialog pro úpravu nastavení editoru."""
+
     def __init__(self, settings, parent=None):
         super().__init__(parent)
         self.settings = settings
@@ -59,7 +70,8 @@ class SettingsDialog(QDialog):
         btnLayout.addWidget(saveBtn)
         layout.addLayout(btnLayout)
 
-    def _buildThemesTab(self):
+    def _buildThemesTab(self) -> QWidget:
+        """Sestaví záložku s přepínači pro výběr barevného tématu."""
         widget = QWidget()
         layout = QVBoxLayout(widget)
         layout.setContentsMargins(16, 16, 16, 16)
@@ -83,7 +95,8 @@ class SettingsDialog(QDialog):
         layout.addStretch()
         return widget
 
-    def _buildShortcutsTab(self):
+    def _buildShortcutsTab(self) -> QWidget:
+        """Sestaví záložku s tabulkou pro úpravu klávesových zkratek."""
         widget = QWidget()
         layout = QVBoxLayout(widget)
         layout.setContentsMargins(16, 16, 16, 16)
@@ -105,18 +118,19 @@ class SettingsDialog(QDialog):
 
         for row, (key, value) in enumerate(shortcuts.items()):
             actionItem = QTableWidgetItem(labels.get(key, key))
-            actionItem.setFlags(Qt.ItemIsEnabled)  
+            actionItem.setFlags(Qt.ItemIsEnabled)
             actionItem.setForeground(QColor("#6272a4"))
             self._shortcutTable.setItem(row, 0, actionItem)
 
             shortcutItem = QTableWidgetItem(value)
-            shortcutItem.setData(Qt.UserRole, key) 
+            shortcutItem.setData(Qt.UserRole, key)
             self._shortcutTable.setItem(row, 1, shortcutItem)
 
         layout.addWidget(self._shortcutTable)
         return widget
 
-    def _save(self):
+    def _save(self) -> None:
+        """Uloží nastavení z formuláře do SettingsManager a zavře dialog."""
         for btn in self._themeGroup.buttons():
             if btn.isChecked():
                 self.settings.set("theme", btn.property("themeKey"))

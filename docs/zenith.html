@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>zenith package &#8212; zenith  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="zenith documentation" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="zenith-package">
+<h1>zenith package<a class="headerlink" href="#zenith-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-zenith.editor">
+<span id="zenith-editor-module"></span><h2>zenith.editor module<a class="headerlink" href="#module-zenith.editor" title="Link to this heading">¶</a></h2>
+<p>Widgety textového editoru s čísly řádků a zvýrazňováním syntaxe.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="zenith.editor.Editor">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">zenith.editor.</span></span><span class="sig-name descname"><span class="pre">Editor</span></span><a class="reference internal" href="_modules/zenith/editor.html#Editor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.editor.Editor" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Kompletní panel editoru s nástrojovou lištou a správou souborů.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.editor.Editor.applyShortcuts">
+<span class="sig-name descname"><span class="pre">applyShortcuts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shortcuts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/editor.html#Editor.applyShortcuts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.editor.Editor.applyShortcuts" title="Link to this definition">¶</a></dt>
+<dd><p>Nastaví klávesové zkratky pro uložení, otevření složky a nový soubor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.editor.Editor.applyTheme">
+<span class="sig-name descname"><span class="pre">applyTheme</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theme</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/editor.html#Editor.applyTheme"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.editor.Editor.applyTheme" title="Link to this definition">¶</a></dt>
+<dd><p>Aplikuje téma na nástrojovou lištu, popisek souboru, editor a zvýrazňovač.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.editor.Editor.newFile">
+<span class="sig-name descname"><span class="pre">newFile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/editor.html#Editor.newFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.editor.Editor.newFile" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.editor.Editor.openFile">
+<span class="sig-name descname"><span class="pre">openFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filePath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/editor.html#Editor.openFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.editor.Editor.openFile" title="Link to this definition">¶</a></dt>
+<dd><p>Načte obsah souboru do editoru.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.editor.Editor.openFolder">
+<span class="sig-name descname"><span class="pre">openFolder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/editor.html#Editor.openFolder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.editor.Editor.openFolder" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.editor.Editor.saveFile">
+<span class="sig-name descname"><span class="pre">saveFile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/editor.html#Editor.saveFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.editor.Editor.saveFile" title="Link to this definition">¶</a></dt>
+<dd><p>Uloží soubor, při prvním uložení zobrazí dialog pro výběr cesty.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zenith.editor.Editor.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Editor&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#zenith.editor.Editor.staticMetaObject" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.editor.Editor.updateHeader">
+<span class="sig-name descname"><span class="pre">updateHeader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/editor.html#Editor.updateHeader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.editor.Editor.updateHeader" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="zenith.editor.codeEditor">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">zenith.editor.</span></span><span class="sig-name descname"><span class="pre">codeEditor</span></span><a class="reference internal" href="_modules/zenith/editor.html#codeEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.editor.codeEditor" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QPlainTextEdit</span></code></p>
+<p>Textový editor s integrovaným panelem čísel řádků.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.editor.codeEditor.applyTheme">
+<span class="sig-name descname"><span class="pre">applyTheme</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theme</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/editor.html#codeEditor.applyTheme"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.editor.codeEditor.applyTheme" title="Link to this definition">¶</a></dt>
+<dd><p>Aplikuje barevné téma na editor a panel čísel řádků.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.editor.codeEditor.lineNumberAreaPaintEvent">
+<span class="sig-name descname"><span class="pre">lineNumberAreaPaintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPaintEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/editor.html#codeEditor.lineNumberAreaPaintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.editor.codeEditor.lineNumberAreaPaintEvent" title="Link to this definition">¶</a></dt>
+<dd><p>Vykreslí čísla viditelných řádků do postranního panelu.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.editor.codeEditor.lineNumberAreaWidth">
+<span class="sig-name descname"><span class="pre">lineNumberAreaWidth</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/zenith/editor.html#codeEditor.lineNumberAreaWidth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.editor.codeEditor.lineNumberAreaWidth" title="Link to this definition">¶</a></dt>
+<dd><p>Vypočítá šířku panelu čísel řádků podle počtu číslic v posledním řádku.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.editor.codeEditor.resizeEvent">
+<span class="sig-name descname"><span class="pre">resizeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QResizeEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/editor.html#codeEditor.resizeEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.editor.codeEditor.resizeEvent" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zenith.editor.codeEditor.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;codeEditor&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QPlainTextEdit&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#zenith.editor.codeEditor.staticMetaObject" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.editor.codeEditor.updateLineNumberArea">
+<span class="sig-name descname"><span class="pre">updateLineNumberArea</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rect</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QRect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/editor.html#codeEditor.updateLineNumberArea"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.editor.codeEditor.updateLineNumberArea" title="Link to this definition">¶</a></dt>
+<dd><p>Posune nebo překreslí panel čísel řádků při scrollování nebo změně obsahu.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.editor.codeEditor.updateLineNumberAreaWidth">
+<span class="sig-name descname"><span class="pre">updateLineNumberAreaWidth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/editor.html#codeEditor.updateLineNumberAreaWidth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.editor.codeEditor.updateLineNumberAreaWidth" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="zenith.editor.lineNumberArea">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">zenith.editor.</span></span><span class="sig-name descname"><span class="pre">lineNumberArea</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#zenith.editor.codeEditor" title="zenith.editor.codeEditor"><span class="pre">codeEditor</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/zenith/editor.html#lineNumberArea"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.editor.lineNumberArea" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Panel zobrazující čísla řádků vedle textového editoru.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.editor.lineNumberArea.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPaintEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/editor.html#lineNumberArea.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.editor.lineNumberArea.paintEvent" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.editor.lineNumberArea.sizeHint">
+<span class="sig-name descname"><span class="pre">sizeHint</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QSize</span></span></span><a class="reference internal" href="_modules/zenith/editor.html#lineNumberArea.sizeHint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.editor.lineNumberArea.sizeHint" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zenith.editor.lineNumberArea.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;lineNumberArea&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#zenith.editor.lineNumberArea.staticMetaObject" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-zenith.file_delegate">
+<span id="zenith-file-delegate-module"></span><h2>zenith.file_delegate module<a class="headerlink" href="#module-zenith.file_delegate" title="Link to this heading">¶</a></h2>
+<p>Delegát pro položky stromu souborů s ikonou pro mazání.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="zenith.file_delegate.FileDelegate">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">zenith.file_delegate.</span></span><span class="sig-name descname"><span class="pre">FileDelegate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/zenith/file_delegate.html#FileDelegate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.file_delegate.FileDelegate" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QStyledItemDelegate</span></code></p>
+<p>Zobrazuje ikonu koše u každé položky ve stromu souborů.</p>
+<p>Při kliknutí na ikonu emituje signál trashClicked s cestou k souboru.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.file_delegate.FileDelegate.editorEvent">
+<span class="sig-name descname"><span class="pre">editorEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QEvent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QAbstractItemModel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QStyleOptionViewItem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/zenith/file_delegate.html#FileDelegate.editorEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.file_delegate.FileDelegate.editorEvent" title="Link to this definition">¶</a></dt>
+<dd><p>Zachytí klik na ikonu koše a emituje trashClicked.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.file_delegate.FileDelegate.paint">
+<span class="sig-name descname"><span class="pre">paint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">painter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QPainter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QStyleOptionViewItem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/file_delegate.html#FileDelegate.paint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.file_delegate.FileDelegate.paint" title="Link to this definition">¶</a></dt>
+<dd><p>Vykreslí řádek a přidá ikonu koše na pravý okraj.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zenith.file_delegate.FileDelegate.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;FileDelegate&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QStyledItemDelegate&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#9</span> <span class="pre">type=Signal,</span> <span class="pre">signature=trashClicked(QString),</span> <span class="pre">parameters=QString</span> <span class="pre">)</span></span><a class="headerlink" href="#zenith.file_delegate.FileDelegate.staticMetaObject" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zenith.file_delegate.FileDelegate.trashClicked">
+<span class="sig-name descname"><span class="pre">trashClicked</span></span><a class="headerlink" href="#zenith.file_delegate.FileDelegate.trashClicked" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zenith.file_delegate.createColoredIcon">
+<span class="sig-prename descclassname"><span class="pre">zenith.file_delegate.</span></span><span class="sig-name descname"><span class="pre">createColoredIcon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iconPath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorHex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'#8be9fd'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QIcon</span></span></span><a class="reference internal" href="_modules/zenith/file_delegate.html#createColoredIcon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.file_delegate.createColoredIcon" title="Link to this definition">¶</a></dt>
+<dd><p>Načte PNG ikonu a přebarví její neprůhledné pixely na zadanou barvu.</p>
+</dd></dl>
+
+</section>
+<section id="module-zenith.highlighter">
+<span id="zenith-highlighter-module"></span><h2>zenith.highlighter module<a class="headerlink" href="#module-zenith.highlighter" title="Link to this heading">¶</a></h2>
+<p>Syntaktický zvýrazňovač pro Python kód.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="zenith.highlighter.Highlighter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">zenith.highlighter.</span></span><span class="sig-name descname"><span class="pre">Highlighter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/zenith/highlighter.html#Highlighter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.highlighter.Highlighter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QSyntaxHighlighter</span></code></p>
+<p>Zvýrazňuje Python tokeny barvami z aktuálního tématu.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.highlighter.Highlighter.applyTheme">
+<span class="sig-name descname"><span class="pre">applyTheme</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theme</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/highlighter.html#Highlighter.applyTheme"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.highlighter.Highlighter.applyTheme" title="Link to this definition">¶</a></dt>
+<dd><p>Přestaví formáty barev podle nového tématu a znovu zvýrazní dokument.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.highlighter.Highlighter.highlightBlock">
+<span class="sig-name descname"><span class="pre">highlightBlock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/highlighter.html#Highlighter.highlightBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.highlighter.Highlighter.highlightBlock" title="Link to this definition">¶</a></dt>
+<dd><p>Aplikuje uložené formáty na aktuální blok textu.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zenith.highlighter.Highlighter.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Highlighter&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QSyntaxHighlighter&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#zenith.highlighter.Highlighter.staticMetaObject" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-zenith.lexer">
+<span id="zenith-lexer-module"></span><h2>zenith.lexer module<a class="headerlink" href="#module-zenith.lexer" title="Link to this heading">¶</a></h2>
+<p>Tokenizátor Python kódu pomocí tree-sitter.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="zenith.lexer.tokenize_document">
+<span class="sig-prename descclassname"><span class="pre">zenith.lexer.</span></span><span class="sig-name descname"><span class="pre">tokenize_document</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/zenith/lexer.html#tokenize_document"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.lexer.tokenize_document" title="Link to this definition">¶</a></dt>
+<dd><p>Naparsuje zdrojový kód a vrátí tokeny rozdělené podle řádků.</p>
+<p>Vrací slovník kde klíč je číslo řádku a hodnota je seznam trojic
+(typ tokenu, začáteční sloupec, délka).</p>
+</dd></dl>
+
+</section>
+<section id="module-zenith.settings_dialog">
+<span id="zenith-settings-dialog-module"></span><h2>zenith.settings_dialog module<a class="headerlink" href="#module-zenith.settings_dialog" title="Link to this heading">¶</a></h2>
+<p>Dialog nastavení s záložkami pro témata a klávesové zkratky.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="zenith.settings_dialog.SettingsDialog">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">zenith.settings_dialog.</span></span><span class="sig-name descname"><span class="pre">SettingsDialog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/zenith/settings_dialog.html#SettingsDialog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.settings_dialog.SettingsDialog" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<p>Modální dialog pro úpravu nastavení editoru.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zenith.settings_dialog.SettingsDialog.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;SettingsDialog&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QDialog&quot;:</span> <span class="pre">)</span></span><a class="headerlink" href="#zenith.settings_dialog.SettingsDialog.staticMetaObject" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-zenith.settings_manager">
+<span id="zenith-settings-manager-module"></span><h2>zenith.settings_manager module<a class="headerlink" href="#module-zenith.settings_manager" title="Link to this heading">¶</a></h2>
+<p>Správa nastavení editoru uložených v JSON souboru.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="zenith.settings_manager.SettingsManager">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">zenith.settings_manager.</span></span><span class="sig-name descname"><span class="pre">SettingsManager</span></span><a class="reference internal" href="_modules/zenith/settings_manager.html#SettingsManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.settings_manager.SettingsManager" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Načítá a ukládá nastavení do souboru ~/.zenith/settings.json.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.settings_manager.SettingsManager.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="_modules/zenith/settings_manager.html#SettingsManager.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.settings_manager.SettingsManager.get" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.settings_manager.SettingsManager.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/settings_manager.html#SettingsManager.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.settings_manager.SettingsManager.load" title="Link to this definition">¶</a></dt>
+<dd><p>Načte nastavení ze souboru, při chybě použije výchozí hodnoty.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.settings_manager.SettingsManager.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/settings_manager.html#SettingsManager.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.settings_manager.SettingsManager.save" title="Link to this definition">¶</a></dt>
+<dd><p>Uloží aktuální nastavení do souboru.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.settings_manager.SettingsManager.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/settings_manager.html#SettingsManager.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.settings_manager.SettingsManager.set" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-zenith.sidebar">
+<span id="zenith-sidebar-module"></span><h2>zenith.sidebar module<a class="headerlink" href="#module-zenith.sidebar" title="Link to this heading">¶</a></h2>
+<p>Postranní panel se stromem souborů.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="zenith.sidebar.Sidebar">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">zenith.sidebar.</span></span><span class="sig-name descname"><span class="pre">Sidebar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/zenith/sidebar.html#Sidebar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.sidebar.Sidebar" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Postranní panel s nástrojovou lištou a stromem souborů projektu.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.sidebar.Sidebar.chooseFolder">
+<span class="sig-name descname"><span class="pre">chooseFolder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/sidebar.html#Sidebar.chooseFolder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.sidebar.Sidebar.chooseFolder" title="Link to this definition">¶</a></dt>
+<dd><p>Otevře dialog pro výběr složky a aktualizuje strom souborů.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.sidebar.Sidebar.createNewFile">
+<span class="sig-name descname"><span class="pre">createNewFile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/sidebar.html#Sidebar.createNewFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.sidebar.Sidebar.createNewFile" title="Link to this definition">¶</a></dt>
+<dd><p>Zobrazí dialog pro zadání názvu a vytvoří nový prázdný soubor ve vybrané složce.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.sidebar.Sidebar.deleteFile">
+<span class="sig-name descname"><span class="pre">deleteFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filePath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/sidebar.html#Sidebar.deleteFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.sidebar.Sidebar.deleteFile" title="Link to this definition">¶</a></dt>
+<dd><p>Zobrazí potvrzovací dialog a smaže soubor.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zenith.sidebar.Sidebar.fileDoubleClicked">
+<span class="sig-name descname"><span class="pre">fileDoubleClicked</span></span><a class="headerlink" href="#zenith.sidebar.Sidebar.fileDoubleClicked" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="zenith.sidebar.Sidebar.onDoubleClick">
+<span class="sig-name descname"><span class="pre">onDoubleClick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/zenith/sidebar.html#Sidebar.onDoubleClick"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.sidebar.Sidebar.onDoubleClick" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zenith.sidebar.Sidebar.saveFileClicked">
+<span class="sig-name descname"><span class="pre">saveFileClicked</span></span><a class="headerlink" href="#zenith.sidebar.Sidebar.saveFileClicked" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zenith.sidebar.Sidebar.settingsClicked">
+<span class="sig-name descname"><span class="pre">settingsClicked</span></span><a class="headerlink" href="#zenith.sidebar.Sidebar.settingsClicked" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="zenith.sidebar.Sidebar.staticMetaObject">
+<span class="sig-name descname"><span class="pre">staticMetaObject</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PySide6.QtCore.QMetaObject(&quot;Sidebar&quot;</span> <span class="pre">inherits</span> <span class="pre">&quot;QWidget&quot;:</span> <span class="pre">Methods:</span>&#160;&#160; <span class="pre">#33</span> <span class="pre">type=Signal,</span> <span class="pre">signature=fileDoubleClicked(QString),</span> <span class="pre">parameters=QString</span>&#160;&#160; <span class="pre">#34</span> <span class="pre">type=Signal,</span> <span class="pre">signature=saveFileClicked()</span>&#160;&#160; <span class="pre">#35</span> <span class="pre">type=Signal,</span> <span class="pre">signature=settingsClicked()</span> <span class="pre">)</span></span><a class="headerlink" href="#zenith.sidebar.Sidebar.staticMetaObject" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="zenith.sidebar.createColoredIcon">
+<span class="sig-prename descclassname"><span class="pre">zenith.sidebar.</span></span><span class="sig-name descname"><span class="pre">createColoredIcon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iconPath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorHex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'#8be9fd'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QIcon</span></span></span><a class="reference internal" href="_modules/zenith/sidebar.html#createColoredIcon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#zenith.sidebar.createColoredIcon" title="Link to this definition">¶</a></dt>
+<dd><p>Načte PNG ikonu a přebarví její neprůhledné pixely na zadanou barvu.</p>
+</dd></dl>
+
+</section>
+<section id="module-zenith.themes">
+<span id="zenith-themes-module"></span><h2>zenith.themes module<a class="headerlink" href="#module-zenith.themes" title="Link to this heading">¶</a></h2>
+<p>Barevná témata pro editor.</p>
+</section>
+<section id="module-zenith">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-zenith" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">zenith</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">zenith package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-zenith.editor">zenith.editor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#zenith.editor.Editor"><code class="docutils literal notranslate"><span class="pre">Editor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.editor.Editor.applyShortcuts"><code class="docutils literal notranslate"><span class="pre">Editor.applyShortcuts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.editor.Editor.applyTheme"><code class="docutils literal notranslate"><span class="pre">Editor.applyTheme()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.editor.Editor.newFile"><code class="docutils literal notranslate"><span class="pre">Editor.newFile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.editor.Editor.openFile"><code class="docutils literal notranslate"><span class="pre">Editor.openFile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.editor.Editor.openFolder"><code class="docutils literal notranslate"><span class="pre">Editor.openFolder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.editor.Editor.saveFile"><code class="docutils literal notranslate"><span class="pre">Editor.saveFile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.editor.Editor.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Editor.staticMetaObject</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.editor.Editor.updateHeader"><code class="docutils literal notranslate"><span class="pre">Editor.updateHeader()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#zenith.editor.codeEditor"><code class="docutils literal notranslate"><span class="pre">codeEditor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.editor.codeEditor.applyTheme"><code class="docutils literal notranslate"><span class="pre">codeEditor.applyTheme()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.editor.codeEditor.lineNumberAreaPaintEvent"><code class="docutils literal notranslate"><span class="pre">codeEditor.lineNumberAreaPaintEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.editor.codeEditor.lineNumberAreaWidth"><code class="docutils literal notranslate"><span class="pre">codeEditor.lineNumberAreaWidth()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.editor.codeEditor.resizeEvent"><code class="docutils literal notranslate"><span class="pre">codeEditor.resizeEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.editor.codeEditor.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">codeEditor.staticMetaObject</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.editor.codeEditor.updateLineNumberArea"><code class="docutils literal notranslate"><span class="pre">codeEditor.updateLineNumberArea()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.editor.codeEditor.updateLineNumberAreaWidth"><code class="docutils literal notranslate"><span class="pre">codeEditor.updateLineNumberAreaWidth()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#zenith.editor.lineNumberArea"><code class="docutils literal notranslate"><span class="pre">lineNumberArea</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.editor.lineNumberArea.paintEvent"><code class="docutils literal notranslate"><span class="pre">lineNumberArea.paintEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.editor.lineNumberArea.sizeHint"><code class="docutils literal notranslate"><span class="pre">lineNumberArea.sizeHint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.editor.lineNumberArea.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">lineNumberArea.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-zenith.file_delegate">zenith.file_delegate module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#zenith.file_delegate.FileDelegate"><code class="docutils literal notranslate"><span class="pre">FileDelegate</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.file_delegate.FileDelegate.editorEvent"><code class="docutils literal notranslate"><span class="pre">FileDelegate.editorEvent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.file_delegate.FileDelegate.paint"><code class="docutils literal notranslate"><span class="pre">FileDelegate.paint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.file_delegate.FileDelegate.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">FileDelegate.staticMetaObject</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.file_delegate.FileDelegate.trashClicked"><code class="docutils literal notranslate"><span class="pre">FileDelegate.trashClicked</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#zenith.file_delegate.createColoredIcon"><code class="docutils literal notranslate"><span class="pre">createColoredIcon()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-zenith.highlighter">zenith.highlighter module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#zenith.highlighter.Highlighter"><code class="docutils literal notranslate"><span class="pre">Highlighter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.highlighter.Highlighter.applyTheme"><code class="docutils literal notranslate"><span class="pre">Highlighter.applyTheme()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.highlighter.Highlighter.highlightBlock"><code class="docutils literal notranslate"><span class="pre">Highlighter.highlightBlock()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.highlighter.Highlighter.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Highlighter.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-zenith.lexer">zenith.lexer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#zenith.lexer.tokenize_document"><code class="docutils literal notranslate"><span class="pre">tokenize_document()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-zenith.settings_dialog">zenith.settings_dialog module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#zenith.settings_dialog.SettingsDialog"><code class="docutils literal notranslate"><span class="pre">SettingsDialog</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.settings_dialog.SettingsDialog.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">SettingsDialog.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-zenith.settings_manager">zenith.settings_manager module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#zenith.settings_manager.SettingsManager"><code class="docutils literal notranslate"><span class="pre">SettingsManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.settings_manager.SettingsManager.get"><code class="docutils literal notranslate"><span class="pre">SettingsManager.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.settings_manager.SettingsManager.load"><code class="docutils literal notranslate"><span class="pre">SettingsManager.load()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.settings_manager.SettingsManager.save"><code class="docutils literal notranslate"><span class="pre">SettingsManager.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.settings_manager.SettingsManager.set"><code class="docutils literal notranslate"><span class="pre">SettingsManager.set()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-zenith.sidebar">zenith.sidebar module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#zenith.sidebar.Sidebar"><code class="docutils literal notranslate"><span class="pre">Sidebar</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.sidebar.Sidebar.chooseFolder"><code class="docutils literal notranslate"><span class="pre">Sidebar.chooseFolder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.sidebar.Sidebar.createNewFile"><code class="docutils literal notranslate"><span class="pre">Sidebar.createNewFile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.sidebar.Sidebar.deleteFile"><code class="docutils literal notranslate"><span class="pre">Sidebar.deleteFile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.sidebar.Sidebar.fileDoubleClicked"><code class="docutils literal notranslate"><span class="pre">Sidebar.fileDoubleClicked</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.sidebar.Sidebar.onDoubleClick"><code class="docutils literal notranslate"><span class="pre">Sidebar.onDoubleClick()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.sidebar.Sidebar.saveFileClicked"><code class="docutils literal notranslate"><span class="pre">Sidebar.saveFileClicked</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.sidebar.Sidebar.settingsClicked"><code class="docutils literal notranslate"><span class="pre">Sidebar.settingsClicked</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zenith.sidebar.Sidebar.staticMetaObject"><code class="docutils literal notranslate"><span class="pre">Sidebar.staticMetaObject</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#zenith.sidebar.createColoredIcon"><code class="docutils literal notranslate"><span class="pre">createColoredIcon()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-zenith.themes">zenith.themes module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-zenith">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">zenith documentation</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Author.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/zenith.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

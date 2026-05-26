@@ -1,22 +1,32 @@
+"""Widgety textového editoru s čísly řádků a zvýrazňováním syntaxe."""
+
+from __future__ import annotations
+
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFileDialog, QPlainTextEdit
-from PySide6.QtGui import QPainter, QColor, QAction, QKeySequence
+from PySide6.QtGui import QPainter, QColor, QAction, QKeySequence, QPaintEvent, QResizeEvent
 from PySide6.QtCore import Qt, QRect, QSize
 from .highlighter import Highlighter
 from .themes import THEMES
 import os
 
+
 class lineNumberArea(QWidget):
-    def __init__(self, editor):
+    """Panel zobrazující čísla řádků vedle textového editoru."""
+
+    def __init__(self, editor: codeEditor):
         super().__init__(editor)
         self.codeEditor = editor
 
-    def sizeHint(self):
+    def sizeHint(self) -> QSize:
         return QSize(self.codeEditor.lineNumberAreaWidth(), 0)
 
-    def paintEvent(self, event):
+    def paintEvent(self, event: QPaintEvent) -> None:
         self.codeEditor.lineNumberAreaPaintEvent(event)
 
+
 class codeEditor(QPlainTextEdit):
+    """Textový editor s integrovaným panelem čísel řádků."""
+
     def __init__(self):
         super().__init__()
         self.lineNumberArea = lineNumberArea(self)
@@ -29,7 +39,8 @@ class codeEditor(QPlainTextEdit):
         self.lineNumberArea.show()
         self.lineNumberArea.raise_()
 
-    def lineNumberAreaWidth(self):
+    def lineNumberAreaWidth(self) -> int:
+        """Vypočítá šířku panelu čísel řádků podle počtu číslic v posledním řádku."""
         digits = 1
         maxValue = max(1, self.blockCount())
         while maxValue >= 10:
@@ -38,10 +49,11 @@ class codeEditor(QPlainTextEdit):
         space = 15 + self.fontMetrics().horizontalAdvance('9') * digits
         return space
 
-    def updateLineNumberAreaWidth(self, _):
+    def updateLineNumberAreaWidth(self, _: int) -> None:
         self.setViewportMargins(self.lineNumberAreaWidth(), 0, 0, 0)
 
-    def updateLineNumberArea(self, rect, dy):
+    def updateLineNumberArea(self, rect: QRect, dy: int) -> None:
+        """Posune nebo překreslí panel čísel řádků při scrollování nebo změně obsahu."""
         if dy:
             self.lineNumberArea.scroll(0, dy)
         else:
@@ -49,7 +61,7 @@ class codeEditor(QPlainTextEdit):
         if rect.contains(self.viewport().rect()):
             self.updateLineNumberAreaWidth(0)
 
-    def resizeEvent(self, event):
+    def resizeEvent(self, event: QResizeEvent) -> None:
         super().resizeEvent(event)
         cr = self.contentsRect()
         self.lineNumberArea.setGeometry(
@@ -57,7 +69,8 @@ class codeEditor(QPlainTextEdit):
         )
         self.lineNumberArea.raise_()
 
-    def lineNumberAreaPaintEvent(self, event):
+    def lineNumberAreaPaintEvent(self, event: QPaintEvent) -> None:
+        """Vykreslí čísla viditelných řádků do postranního panelu."""
         painter = QPainter(self.lineNumberArea)
         painter.fillRect(event.rect(), QColor(self._theme["line_number_bg"]))
 
@@ -80,7 +93,8 @@ class codeEditor(QPlainTextEdit):
             bottom = top + round(self.blockBoundingRect(block).height())
             blockNumber += 1
 
-    def applyTheme(self, theme):
+    def applyTheme(self, theme: dict[str, str]) -> None:
+        """Aplikuje barevné téma na editor a panel čísel řádků."""
         self._theme = theme
         self.setStyleSheet(f"""
             QPlainTextEdit {{
@@ -93,10 +107,13 @@ class codeEditor(QPlainTextEdit):
         """)
         self.lineNumberArea.update()
 
+
 class Editor(QWidget):
+    """Kompletní panel editoru s nástrojovou lištou a správou souborů."""
+
     def __init__(self):
         super().__init__()
-        self.currentFile = None
+        self.currentFile: str | None = None
         self._theme = THEMES["dracula"]
 
         self.mainLayout = QVBoxLayout(self)
@@ -147,12 +164,14 @@ class Editor(QWidget):
         self.addAction(self.newFileAction)
         self.newFileAction.triggered.connect(self.newFile)
 
-    def applyShortcuts(self, shortcuts):
+    def applyShortcuts(self, shortcuts: dict[str, str]) -> None:
+        """Nastaví klávesové zkratky pro uložení, otevření složky a nový soubor."""
         self.saveAction.setShortcut(QKeySequence(shortcuts.get("save", "Ctrl+S")))
         self.openFolderAction.setShortcut(QKeySequence(shortcuts.get("open_folder", "Ctrl+O")))
         self.newFileAction.setShortcut(QKeySequence(shortcuts.get("new_file", "Ctrl+N")))
 
-    def applyTheme(self, theme):
+    def applyTheme(self, theme: dict[str, str]) -> None:
+        """Aplikuje téma na nástrojovou lištu, popisek souboru, editor a zvýrazňovač."""
         self._theme = theme
         self.toolbar.setStyleSheet(
             f"background-color: {theme['toolbar_bg']}; border-bottom: 1px solid {theme['border']};"
@@ -161,17 +180,18 @@ class Editor(QWidget):
         self.textEdit.applyTheme(theme)
         self.highlighter.applyTheme(theme)
 
-    def newFile(self):
+    def newFile(self) -> None:
         self.currentFile = None
         self.textEdit.clear()
         self.updateHeader()
 
-    def openFolder(self):
+    def openFolder(self) -> None:
         dirPath = QFileDialog.getExistingDirectory(self, "Open Folder")
         if dirPath:
             print(f"Opened folder: {dirPath}")
 
-    def saveFile(self):
+    def saveFile(self) -> None:
+        """Uloží soubor, při prvním uložení zobrazí dialog pro výběr cesty."""
         if not self.currentFile:
             filePath, _ = QFileDialog.getSaveFileName(
                 self,
@@ -191,7 +211,8 @@ class Editor(QWidget):
         except Exception as e:
             print(f"Error while saving: {e}")
 
-    def openFile(self, filePath):
+    def openFile(self, filePath: str) -> None:
+        """Načte obsah souboru do editoru."""
         try:
             with open(filePath, "r", encoding="utf-8") as f:
                 content = f.read()
@@ -201,7 +222,7 @@ class Editor(QWidget):
         except Exception as e:
             print(f"Error while opening: {e}")
 
-    def updateHeader(self):
+    def updateHeader(self) -> None:
         if self.currentFile:
             name = os.path.basename(self.currentFile)
             self.fileLabel.setText(name)

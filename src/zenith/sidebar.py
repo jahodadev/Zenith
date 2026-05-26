@@ -1,17 +1,26 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QTreeView, QFileSystemModel, QMessageBox, QPushButton, QFileDialog, QInputDialog, QLabel
-from PySide6.QtCore import QDir, Signal, QSize
+"""Postranní panel se stromem souborů."""
+
+from __future__ import annotations
+
+from PySide6.QtWidgets import (
+    QWidget, QVBoxLayout, QHBoxLayout, QTreeView, QFileSystemModel,
+    QMessageBox, QPushButton, QFileDialog, QInputDialog, QLabel
+)
+from PySide6.QtCore import QDir, Signal, QSize, QModelIndex
 from PySide6.QtGui import QIcon, QImage, QColor, QPixmap
 from .file_delegate import FileDelegate
 import os
 
-def createColoredIcon(iconPath, colorHex="#8be9fd"):
+
+def createColoredIcon(iconPath: str, colorHex: str = "#8be9fd") -> QIcon:
+    """Načte PNG ikonu a přebarví její neprůhledné pixely na zadanou barvu."""
     img = QImage(iconPath)
     if img.isNull():
         return QIcon()
-        
+
     img = img.convertToFormat(QImage.Format_ARGB32)
     targetColor = QColor(colorHex)
-    
+
     for y in range(img.height()):
         for x in range(img.width()):
             c = img.pixelColor(x, y)
@@ -20,21 +29,23 @@ def createColoredIcon(iconPath, colorHex="#8be9fd"):
                 img.setPixelColor(x, y, targetColor)
             else:
                 img.setPixelColor(x, y, QColor(0, 0, 0, 0))
-                
+
     return QIcon(QPixmap.fromImage(img))
 
+
 class Sidebar(QWidget):
+    """Postranní panel s nástrojovou lištou a stromem souborů projektu."""
+
     fileDoubleClicked = Signal(str)
     saveFileClicked = Signal()
     settingsClicked = Signal()
-    
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setMinimumWidth(200)
-        
+
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
-
         self.layout.setSpacing(0)
 
         self.toolbar = QWidget()
@@ -47,14 +58,14 @@ class Sidebar(QWidget):
 
         iconStyle = """
             QPushButton {
-                background: transparent; 
+                background: transparent;
                 border: none;
-                color: #8be9fd; 
-                border-radius: 4px; 
+                color: #8be9fd;
+                border-radius: 4px;
                 padding: 2px;
             }
             QPushButton:hover {
-                background-color: #44475a; 
+                background-color: #44475a;
             }
             QPushButton:pressed {
                 background-color: #6272a4;
@@ -124,7 +135,7 @@ class Sidebar(QWidget):
         self.tree.setStyleSheet("QTreeView { background-color: #1e1f29; color: white; border: none; }")
 
         self.tree.doubleClicked.connect(self.onDoubleClick)
-        
+
         self.newFileButton.clicked.connect(self.createNewFile)
         self.openFolderButton.clicked.connect(self.chooseFolder)
         self.saveFileButton.clicked.connect(self.saveFileClicked.emit)
@@ -132,12 +143,13 @@ class Sidebar(QWidget):
 
         self.layout.addWidget(self.tree)
 
-    def onDoubleClick(self, index):
+    def onDoubleClick(self, index: QModelIndex) -> None:
         filePath = self.model.filePath(index)
         if not self.model.isDir(index):
             self.fileDoubleClicked.emit(filePath)
 
-    def deleteFile(self, filePath):
+    def deleteFile(self, filePath: str) -> None:
+        """Zobrazí potvrzovací dialog a smaže soubor."""
         reply = QMessageBox.question(
             self,
             "Delete File",
@@ -150,7 +162,8 @@ class Sidebar(QWidget):
             except Exception as e:
                 QMessageBox.warning(self, "Error", f"Could not delete file:\n{e}")
 
-    def chooseFolder(self):
+    def chooseFolder(self) -> None:
+        """Otevře dialog pro výběr složky a aktualizuje strom souborů."""
         folderPath = QFileDialog.getExistingDirectory(self, "Choose project's folder")
 
         if folderPath:
@@ -158,16 +171,17 @@ class Sidebar(QWidget):
             self.tree.setRootIndex(self.model.index(folderPath))
             self.folderLabel.setText(os.path.basename(folderPath).upper())
 
-    def createNewFile(self):
+    def createNewFile(self) -> None:
+        """Zobrazí dialog pro zadání názvu a vytvoří nový prázdný soubor ve vybrané složce."""
         indexes = self.tree.selectedIndexes()
-        if indexes: 
+        if indexes:
             index = indexes[0]
             if not self.model.isDir(index):
                 index = index.parent()
             targetDir = self.model.filePath(index)
         else:
             targetDir = self.model.rootPath()
-        
+
         fileName, ok = QInputDialog.getText(self, "New File", "Enter file name:")
 
         if fileName and ok:

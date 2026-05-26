@@ -1,3 +1,7 @@
+"""Vstupní bod aplikace Zenith Code Editor."""
+
+from __future__ import annotations
+
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QSplitter, QWidget, QVBoxLayout
 from PySide6.QtCore import Qt
@@ -8,7 +12,10 @@ from .settings_manager import SettingsManager
 from .settings_dialog import SettingsDialog
 from .themes import THEMES
 
+
 class EditorArea(QWidget):
+    """Kontejner spravující více instancí editoru v rozděleném zobrazení."""
+
     def __init__(self):
         super().__init__()
 
@@ -22,12 +29,13 @@ class EditorArea(QWidget):
         )
         layout.addWidget(self.splitter)
 
-        self.editors = []
-        self._currentShortcuts = None
-        self._currentTheme = None
+        self.editors: list[Editor] = []
+        self._currentShortcuts: dict[str, str] | None = None
+        self._currentTheme: dict[str, str] | None = None
         self.addEditor()
 
-    def addEditor(self):
+    def addEditor(self) -> Editor:
+        """Přidá nový panel editoru a rovnoměrně rozdělí dostupný prostor."""
         editor = Editor()
         self.editors.append(editor)
         self.splitter.addWidget(editor)
@@ -39,7 +47,8 @@ class EditorArea(QWidget):
         self.splitter.setSizes([1000 // count] * count)
         return editor
 
-    def closeActiveEditor(self):
+    def closeActiveEditor(self) -> None:
+        """Zavře aktivní editor. Pokud je otevřený jen jeden, nic neprovede."""
         if len(self.editors) <= 1:
             return
         editor = self._getActiveEditor()
@@ -47,22 +56,24 @@ class EditorArea(QWidget):
             self.editors.remove(editor)
             editor.deleteLater()
 
-    def openFile(self, filePath):
+    def openFile(self, filePath: str) -> None:
         editor = self._getActiveEditor()
         if editor:
             editor.openFile(filePath)
 
-    def saveFile(self):
+    def saveFile(self) -> None:
         editor = self._getActiveEditor()
         if editor:
             editor.saveFile()
 
-    def applyShortcuts(self, shortcuts):
+    def applyShortcuts(self, shortcuts: dict[str, str]) -> None:
+        """Uloží zkratky a předá je všem otevřeným editorům."""
         self._currentShortcuts = shortcuts
         for editor in self.editors:
             editor.applyShortcuts(shortcuts)
 
-    def applyTheme(self, theme):
+    def applyTheme(self, theme: dict[str, str]) -> None:
+        """Aplikuje téma na oddělovač a všechny otevřené editory."""
         self._currentTheme = theme
         self.splitter.setStyleSheet(
             f"QSplitter::handle {{ background-color: {theme['border']}; }}"
@@ -70,17 +81,19 @@ class EditorArea(QWidget):
         for editor in self.editors:
             editor.applyTheme(theme)
 
-    def _getActiveEditor(self):
+    def _getActiveEditor(self) -> Editor | None:
+        """Vrátí editor s fokusem, nebo první v seznamu. Pokud žádný není, vrátí None."""
         for editor in self.editors:
             if editor.textEdit.hasFocus():
                 return editor
         if self.editors:
             return self.editors[0]
-        else:
-            return None
+        return None
 
 
 class MainWindow(QMainWindow):
+    """Hlavní okno aplikace spojující postranní panel a oblast editorů."""
+
     def __init__(self):
         super().__init__()
 
@@ -117,12 +130,13 @@ class MainWindow(QMainWindow):
 
         self._applySettings()
 
-    def openSettings(self):
+    def openSettings(self) -> None:
         dialog = SettingsDialog(self.settings, self)
         if dialog.exec():
             self._applySettings()
 
-    def _applySettings(self):
+    def _applySettings(self) -> None:
+        """Načte nastavení a aplikuje téma a zkratky na celé UI."""
         shortcuts = self.settings.get("shortcuts")
         self.splitAction.setShortcut(QKeySequence(shortcuts.get("split_editor", "Ctrl+E")))
         self.closeAction.setShortcut(QKeySequence(shortcuts.get("close_split", "Ctrl+W")))
@@ -150,13 +164,12 @@ class MainWindow(QMainWindow):
         )
 
 
-def main():
+def main() -> None:
     app = QApplication(sys.argv)
-
     window = MainWindow()
     window.show()
-
     sys.exit(app.exec())
+
 
 if __name__ == "__main__":
     main()

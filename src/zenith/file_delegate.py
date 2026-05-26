@@ -1,16 +1,22 @@
-from PySide6.QtWidgets import QStyledItemDelegate
-from PySide6.QtGui import QIcon, QImage, QColor, QPixmap
-from PySide6.QtCore import QRect, Qt, Signal, QObject, QEvent
+"""Delegát pro položky stromu souborů s ikonou pro mazání."""
+
+from __future__ import annotations
+
+from PySide6.QtWidgets import QStyledItemDelegate, QStyleOptionViewItem
+from PySide6.QtGui import QIcon, QImage, QColor, QPixmap, QPainter
+from PySide6.QtCore import QRect, Qt, Signal, QEvent, QModelIndex, QAbstractItemModel
 import os
 
-def createColoredIcon(iconPath, colorHex="#8be9fd"):
+
+def createColoredIcon(iconPath: str, colorHex: str = "#8be9fd") -> QIcon:
+    """Načte PNG ikonu a přebarví její neprůhledné pixely na zadanou barvu."""
     img = QImage(iconPath)
     if img.isNull():
         return QIcon()
-        
+
     img = img.convertToFormat(QImage.Format_ARGB32)
     targetColor = QColor(colorHex)
-    
+
     for y in range(img.height()):
         for x in range(img.width()):
             c = img.pixelColor(x, y)
@@ -19,10 +25,16 @@ def createColoredIcon(iconPath, colorHex="#8be9fd"):
                 img.setPixelColor(x, y, targetColor)
             else:
                 img.setPixelColor(x, y, QColor(0, 0, 0, 0))
-                
+
     return QIcon(QPixmap.fromImage(img))
 
+
 class FileDelegate(QStyledItemDelegate):
+    """Zobrazuje ikonu koše u každé položky ve stromu souborů.
+
+    Při kliknutí na ikonu emituje signál trashClicked s cestou k souboru.
+    """
+
     trashClicked = Signal(str)
 
     def __init__(self, parent=None):
@@ -32,7 +44,8 @@ class FileDelegate(QStyledItemDelegate):
         iconPath = os.path.join(currentDir, "icons", "recycle-bin.png")
         self.trashIcon = createColoredIcon(iconPath, "#ff5555")
 
-    def paint(self, painter, option, index):
+    def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex) -> None:
+        """Vykreslí řádek a přidá ikonu koše na pravý okraj."""
         super().paint(painter, option, index)
         if index.column() == 0:
             rect = option.rect
@@ -46,7 +59,8 @@ class FileDelegate(QStyledItemDelegate):
             )
             self.trashIcon.paint(painter, iconRect, Qt.AlignCenter)
 
-    def editorEvent(self, event, model, option, index):
+    def editorEvent(self, event: QEvent, model: QAbstractItemModel, option: QStyleOptionViewItem, index: QModelIndex) -> bool:
+        """Zachytí klik na ikonu koše a emituje trashClicked."""
         if event.type() == QEvent.Type.MouseButtonRelease and index.column() == 0:
             rect = option.rect
             iconSize = 16

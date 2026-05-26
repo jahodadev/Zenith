@@ -1,3 +1,5 @@
+"""Barevná témata pro editor."""
+
 THEMES = {
     "dracula": {
         "name": "Dracula",

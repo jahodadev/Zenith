@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>zenith.editor &#8212; zenith  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for zenith.editor</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Widgety textového editoru s čísly řádků a zvýrazňováním syntaxe.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QLabel</span><span class="p">,</span> <span class="n">QFileDialog</span><span class="p">,</span> <span class="n">QPlainTextEdit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtGui</span><span class="w"> </span><span class="kn">import</span> <span class="n">QPainter</span><span class="p">,</span> <span class="n">QColor</span><span class="p">,</span> <span class="n">QAction</span><span class="p">,</span> <span class="n">QKeySequence</span><span class="p">,</span> <span class="n">QPaintEvent</span><span class="p">,</span> <span class="n">QResizeEvent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QRect</span><span class="p">,</span> <span class="n">QSize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.highlighter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Highlighter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.themes</span><span class="w"> </span><span class="kn">import</span> <span class="n">THEMES</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+
+<div class="viewcode-block" id="lineNumberArea">
+<a class="viewcode-back" href="../../zenith.html#zenith.editor.lineNumberArea">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">lineNumberArea</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Panel zobrazující čísla řádků vedle textového editoru.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">:</span> <span class="n">codeEditor</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">editor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">codeEditor</span> <span class="o">=</span> <span class="n">editor</span>
+
+<div class="viewcode-block" id="lineNumberArea.sizeHint">
+<a class="viewcode-back" href="../../zenith.html#zenith.editor.lineNumberArea.sizeHint">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QSize</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">QSize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">codeEditor</span><span class="o">.</span><span class="n">lineNumberAreaWidth</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="lineNumberArea.paintEvent">
+<a class="viewcode-back" href="../../zenith.html#zenith.editor.lineNumberArea.paintEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">paintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QPaintEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">codeEditor</span><span class="o">.</span><span class="n">lineNumberAreaPaintEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="codeEditor">
+<a class="viewcode-back" href="../../zenith.html#zenith.editor.codeEditor">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">codeEditor</span><span class="p">(</span><span class="n">QPlainTextEdit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Textový editor s integrovaným panelem čísel řádků.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberArea</span> <span class="o">=</span> <span class="n">lineNumberArea</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_theme</span> <span class="o">=</span> <span class="n">THEMES</span><span class="p">[</span><span class="s2">&quot;dracula&quot;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">blockCountChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateLineNumberAreaWidth</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateRequest</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateLineNumberArea</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateLineNumberAreaWidth</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberArea</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberArea</span><span class="o">.</span><span class="n">raise_</span><span class="p">()</span>
+
+<div class="viewcode-block" id="codeEditor.lineNumberAreaWidth">
+<a class="viewcode-back" href="../../zenith.html#zenith.editor.codeEditor.lineNumberAreaWidth">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">lineNumberAreaWidth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Vypočítá šířku panelu čísel řádků podle počtu číslic v posledním řádku.&quot;&quot;&quot;</span>
+        <span class="n">digits</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">maxValue</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">blockCount</span><span class="p">())</span>
+        <span class="k">while</span> <span class="n">maxValue</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="n">maxValue</span> <span class="o">/=</span> <span class="mi">10</span>
+            <span class="n">digits</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">space</span> <span class="o">=</span> <span class="mi">15</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">fontMetrics</span><span class="p">()</span><span class="o">.</span><span class="n">horizontalAdvance</span><span class="p">(</span><span class="s1">&#39;9&#39;</span><span class="p">)</span> <span class="o">*</span> <span class="n">digits</span>
+        <span class="k">return</span> <span class="n">space</span></div>
+
+
+<div class="viewcode-block" id="codeEditor.updateLineNumberAreaWidth">
+<a class="viewcode-back" href="../../zenith.html#zenith.editor.codeEditor.updateLineNumberAreaWidth">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">updateLineNumberAreaWidth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setViewportMargins</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lineNumberAreaWidth</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="codeEditor.updateLineNumberArea">
+<a class="viewcode-back" href="../../zenith.html#zenith.editor.codeEditor.updateLineNumberArea">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">updateLineNumberArea</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">:</span> <span class="n">QRect</span><span class="p">,</span> <span class="n">dy</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Posune nebo překreslí panel čísel řádků při scrollování nebo změně obsahu.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">dy</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberArea</span><span class="o">.</span><span class="n">scroll</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberArea</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rect</span><span class="o">.</span><span class="n">y</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberArea</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="n">rect</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">rect</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">rect</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updateLineNumberAreaWidth</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="codeEditor.resizeEvent">
+<a class="viewcode-back" href="../../zenith.html#zenith.editor.codeEditor.resizeEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resizeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QResizeEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">resizeEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="n">cr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contentsRect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberArea</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span>
+            <span class="n">QRect</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">left</span><span class="p">(),</span> <span class="n">cr</span><span class="o">.</span><span class="n">top</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberAreaWidth</span><span class="p">(),</span> <span class="n">cr</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberArea</span><span class="o">.</span><span class="n">raise_</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="codeEditor.lineNumberAreaPaintEvent">
+<a class="viewcode-back" href="../../zenith.html#zenith.editor.codeEditor.lineNumberAreaPaintEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">lineNumberAreaPaintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">QPaintEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Vykreslí čísla viditelných řádků do postranního panelu.&quot;&quot;&quot;</span>
+        <span class="n">painter</span> <span class="o">=</span> <span class="n">QPainter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lineNumberArea</span><span class="p">)</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">fillRect</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">rect</span><span class="p">(),</span> <span class="n">QColor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_theme</span><span class="p">[</span><span class="s2">&quot;line_number_bg&quot;</span><span class="p">]))</span>
+
+        <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">firstVisibleBlock</span><span class="p">()</span>
+        <span class="n">blockNumber</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">blockNumber</span><span class="p">()</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blockBoundingGeometry</span><span class="p">(</span><span class="n">block</span><span class="p">)</span><span class="o">.</span><span class="n">translated</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentOffset</span><span class="p">())</span><span class="o">.</span><span class="n">top</span><span class="p">())</span>
+        <span class="n">bottom</span> <span class="o">=</span> <span class="n">top</span> <span class="o">+</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blockBoundingRect</span><span class="p">(</span><span class="n">block</span><span class="p">)</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+
+        <span class="n">painter</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">())</span>
+
+        <span class="k">while</span> <span class="n">block</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="ow">and</span> <span class="n">top</span> <span class="o">&lt;=</span> <span class="n">event</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">bottom</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">isVisible</span><span class="p">()</span> <span class="ow">and</span> <span class="n">bottom</span> <span class="o">&gt;=</span> <span class="n">event</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">top</span><span class="p">():</span>
+                <span class="n">number</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">blockNumber</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">painter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QColor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_theme</span><span class="p">[</span><span class="s2">&quot;line_number_fg&quot;</span><span class="p">]))</span>
+                <span class="n">rect</span> <span class="o">=</span> <span class="n">QRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberArea</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">-</span> <span class="mi">5</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fontMetrics</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+                <span class="n">painter</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AlignRight</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AlignVCenter</span><span class="p">,</span> <span class="n">number</span><span class="p">)</span>
+
+            <span class="n">block</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+            <span class="n">top</span> <span class="o">=</span> <span class="n">bottom</span>
+            <span class="n">bottom</span> <span class="o">=</span> <span class="n">top</span> <span class="o">+</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blockBoundingRect</span><span class="p">(</span><span class="n">block</span><span class="p">)</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+            <span class="n">blockNumber</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="codeEditor.applyTheme">
+<a class="viewcode-back" href="../../zenith.html#zenith.editor.codeEditor.applyTheme">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">applyTheme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theme</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Aplikuje barevné téma na editor a panel čísel řádků.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_theme</span> <span class="o">=</span> <span class="n">theme</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            QPlainTextEdit </span><span class="se">{{</span>
+<span class="s2">                background-color: </span><span class="si">{</span><span class="n">theme</span><span class="p">[</span><span class="s2">&quot;background&quot;</span><span class="p">]</span><span class="si">}</span><span class="s2">;</span>
+<span class="s2">                color: </span><span class="si">{</span><span class="n">theme</span><span class="p">[</span><span class="s2">&quot;foreground&quot;</span><span class="p">]</span><span class="si">}</span><span class="s2">;</span>
+<span class="s2">                font-family: &#39;Consolas&#39;, &#39;Courier New&#39;, monospace;</span>
+<span class="s2">                font-size: 14px;</span>
+<span class="s2">                border: none;</span>
+<span class="s2">            </span><span class="se">}}</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberArea</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Editor">
+<a class="viewcode-back" href="../../zenith.html#zenith.editor.Editor">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Editor</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Kompletní panel editoru s nástrojovou lištou a správou souborů.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">currentFile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_theme</span> <span class="o">=</span> <span class="n">THEMES</span><span class="p">[</span><span class="s2">&quot;dracula&quot;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mainLayout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mainLayout</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mainLayout</span><span class="o">.</span><span class="n">setSpacing</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span> <span class="o">=</span> <span class="n">QWidget</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">setFixedHeight</span><span class="p">(</span><span class="mi">35</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s2">&quot;background-color: #21222c; border-bottom: 1px solid #191a21;&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbarLayout</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbarLayout</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fileLabel</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;untitled.py&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fileLabel</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s2">&quot;color: #6272a4; font-size: 12px;&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbarLayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fileLabel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbarLayout</span><span class="o">.</span><span class="n">addStretch</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">textEdit</span> <span class="o">=</span> <span class="n">codeEditor</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">textEdit</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="s2">&quot;Start coding here...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">textEdit</span><span class="o">.</span><span class="n">setFrameStyle</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">highlighter</span> <span class="o">=</span> <span class="n">Highlighter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">textEdit</span><span class="o">.</span><span class="n">document</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">textEdit</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            QPlainTextEdit {</span>
+<span class="s2">                background-color: #1c1d26;</span>
+<span class="s2">                color: #f8f8f2;</span>
+<span class="s2">                font-family: &#39;Consolas&#39;, &#39;Courier New&#39;, monospace;</span>
+<span class="s2">                font-size: 14px;</span>
+<span class="s2">                border: none;</span>
+<span class="s2">            }</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mainLayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mainLayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">textEdit</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveAction</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saveAction</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveAction</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saveFile</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">openFolderAction</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">openFolderAction</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">openFolderAction</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">openFolder</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">newFileAction</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">newFileAction</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newFileAction</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Editor.applyShortcuts">
+<a class="viewcode-back" href="../../zenith.html#zenith.editor.Editor.applyShortcuts">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">applyShortcuts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shortcuts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Nastaví klávesové zkratky pro uložení, otevření složky a nový soubor.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveAction</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">QKeySequence</span><span class="p">(</span><span class="n">shortcuts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;save&quot;</span><span class="p">,</span> <span class="s2">&quot;Ctrl+S&quot;</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">openFolderAction</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">QKeySequence</span><span class="p">(</span><span class="n">shortcuts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;open_folder&quot;</span><span class="p">,</span> <span class="s2">&quot;Ctrl+O&quot;</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newFileAction</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">QKeySequence</span><span class="p">(</span><span class="n">shortcuts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;new_file&quot;</span><span class="p">,</span> <span class="s2">&quot;Ctrl+N&quot;</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="Editor.applyTheme">
+<a class="viewcode-back" href="../../zenith.html#zenith.editor.Editor.applyTheme">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">applyTheme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theme</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Aplikuje téma na nástrojovou lištu, popisek souboru, editor a zvýrazňovač.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_theme</span> <span class="o">=</span> <span class="n">theme</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;background-color: </span><span class="si">{</span><span class="n">theme</span><span class="p">[</span><span class="s1">&#39;toolbar_bg&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">; border-bottom: 1px solid </span><span class="si">{</span><span class="n">theme</span><span class="p">[</span><span class="s1">&#39;border&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">;&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fileLabel</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;color: </span><span class="si">{</span><span class="n">theme</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">; font-size: 12px;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">textEdit</span><span class="o">.</span><span class="n">applyTheme</span><span class="p">(</span><span class="n">theme</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">highlighter</span><span class="o">.</span><span class="n">applyTheme</span><span class="p">(</span><span class="n">theme</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Editor.newFile">
+<a class="viewcode-back" href="../../zenith.html#zenith.editor.Editor.newFile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">newFile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">currentFile</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">textEdit</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateHeader</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Editor.openFolder">
+<a class="viewcode-back" href="../../zenith.html#zenith.editor.Editor.openFolder">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">openFolder</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dirPath</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getExistingDirectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Open Folder&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dirPath</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Opened folder: </span><span class="si">{</span><span class="n">dirPath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Editor.saveFile">
+<a class="viewcode-back" href="../../zenith.html#zenith.editor.Editor.saveFile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">saveFile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Uloží soubor, při prvním uložení zobrazí dialog pro výběr cesty.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentFile</span><span class="p">:</span>
+            <span class="n">filePath</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getSaveFileName</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="s2">&quot;Save File&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Python Files (*.py);;All Files (*)&quot;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">filePath</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">currentFile</span> <span class="o">=</span> <span class="n">filePath</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentFile</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">textEdit</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updateHeader</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error while saving: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Editor.openFile">
+<a class="viewcode-back" href="../../zenith.html#zenith.editor.Editor.openFile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">openFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filePath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Načte obsah souboru do editoru.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filePath</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">textEdit</span><span class="o">.</span><span class="n">setPlainText</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">currentFile</span> <span class="o">=</span> <span class="n">filePath</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updateHeader</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error while opening: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Editor.updateHeader">
+<a class="viewcode-back" href="../../zenith.html#zenith.editor.Editor.updateHeader">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">updateHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentFile</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentFile</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fileLabel</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fileLabel</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;untitled.py&quot;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">zenith</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../zenith.html">zenith package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Author.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,3 +1,7 @@
+"""Tokenizátor Python kódu pomocí tree-sitter."""
+
+from __future__ import annotations
+
 import tree_sitter_python as tspython
 from tree_sitter import Language, Parser
 
@@ -19,11 +23,16 @@ KEYWORD_TYPES = {
 }
 
 
-def tokenize_document(text):
-    tree = parser.parse(text.encode("utf-8"))
-    tokens_by_line = {}
+def tokenize_document(text: str) -> dict[int, list[tuple[str, int, int]]]:
+    """Naparsuje zdrojový kód a vrátí tokeny rozdělené podle řádků.
 
-    def walk(node):
+    Vrací slovník kde klíč je číslo řádku a hodnota je seznam trojic
+    (typ tokenu, začáteční sloupec, délka).
+    """
+    tree = parser.parse(text.encode("utf-8"))
+    tokens_by_line: dict[int, list[tuple[str, int, int]]] = {}
+
+    def walk(node) -> None:
         if node.child_count == 0 and node.start_point[0] == node.end_point[0]:
             line   = node.start_point[0]
             start  = node.start_point[1]
