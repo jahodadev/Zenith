@@ -1,57 +1,96 @@
-# Code Editor - Zenith
+# Zenith – Code Editor
 
-Projekt moderního, lehkého a vizuálně přitažlivého textového editoru určeného primárně pro programování. Aplikace je postavena na frameworku **PySide6** a zaměřuje se na přehlednost a uživatelský komfort.
+Moderní, lehký a vizuálně přitažlivý textový editor pro programování. Postaven na **PySide6** s AST-based zvýrazňováním syntaxe přes **tree-sitter**.
 
-## Hlavní funkce (Specifikace)
+## Funkce
 
-Tento editor bude obsahovat následující klíčové vlastnosti:
+- **Zvýrazňování syntaxe** – dynamické barvení kódu (klíčová slova, řetězce, čísla, komentáře, operátory) pomocí tree-sitter parseru
+- **Čísla řádků** – vlastní panel s čísly řádků synchronizovaný se scrollováním
+- **Správa souborů (Sidebar)** – stromová struktura složek a souborů s podporou vytvoření, otevření a smazání
+- **Split view** – horizontální rozdělení editoru na více panelů (Ctrl+E), zavření aktivního panelu (Ctrl+W)
+- **Více témat** – Dracula (výchozí), VS Code Dark+, Monokai
+- **Nastavení** – dialog pro změnu tématu a přiřazení klávesových zkratek, uloženo do `~/.zenith/settings.json`
+- **Ikony** – vizuální rozlišení typů souborů v sidebaru
 
-* **Zvýrazňování syntaxe:** Dynamické barvení kódu podle logických bloků (klíčová slova jako `if`, `for`, `def`, `class` atd.) pro lepší orientaci.
-* **Kontrola syntaktických chyb:** Integrované podtrhávání chyb v reálném čase, které upozorní na překlepy nebo špatné odsazování.
-* **Správa souborů (Sidebar):** Postranní panel se stromovou strukturou složek a souborů pro snadnou navigaci v projektu.
-* **Multi-tab zobrazení:** Možnost mít otevřeno a upravovat více souborů současně v záložkách.
-* **Číslování řádků:** Standardní prvek pro snadnou orientaci v kódu a ladění.
-* **Vizuální styl a ikonky:** Moderní uživatelské rozhraní s ikonkami, které se mění podle typu souboru (např. logo Pythonu u `.py` souborů).
+## Klávesové zkratky
+
+| Zkratka | Akce |
+|---|---|
+| Ctrl+S | Uložit soubor |
+| Ctrl+O | Otevřít složku |
+| Ctrl+N | Nový soubor |
+| Ctrl+E | Rozdělit editor (nový panel) |
+| Ctrl+W | Zavřít aktivní panel |
+
+Všechny zkratky lze přenastavit v dialogu nastavení.
 
 ## Použité technologie
 
-* **Jazyk:** Python
-* **GUI Framework:** PySide6 (Qt for Python)
-* **Další knihovny:** (budou doplňovány průběžně do requirements.txt)
+| Technologie | Verze |
+|---|---|
+| Python | ≥ 3.8 |
+| PySide6 | 6.10.2 |
+| tree-sitter | 0.25.2 |
+| tree-sitter-python | 0.25.0 |
 
 ## Struktura projektu
 
-* `src/` - Zdrojové kódy aplikace.
-  * `main.py` - Vstupní bod aplikace.
-  * `editor.py` - Komponenta textového editoru.
-  * `sidebar.py` - Postranní panel se stromem souborů.
-  * `highlighter.py` - Zvýrazňovač syntaxe.
-  * `file_delegate.py` - Delegát pro vykreslování položek v stromu souborů.
-  * `icons/` - Ikony používané v aplikaci.
-* `docs/` - Uživatelská dokumentace a další materiály.
-* `requirements.txt` - Seznam závislostí pro instalaci.
+```
+editor-va/
+├── src/zenith/
+│   ├── __main__.py         # Vstupní bod (MainWindow, EditorArea)
+│   ├── editor.py           # Widget editoru (codeEditor, Editor)
+│   ├── sidebar.py          # Postranní panel se stromem souborů
+│   ├── highlighter.py      # QSyntaxHighlighter (tree-sitter tokeny)
+│   ├── lexer.py            # Tokenizer – tree-sitter Python parser
+│   ├── themes.py           # Barevná témata
+│   ├── settings_manager.py # Persistence nastavení (JSON)
+│   ├── settings_dialog.py  # Dialog nastavení (téma, zkratky)
+│   ├── file_delegate.py    # Vykreslování položek v stromu souborů
+│   └── icons/              # PNG ikony
+├── docs/                   # Vygenerovaná HTML dokumentace (Sphinx)
+├── pyproject.toml          # Metadata projektu a vstupní bod
+├── requirements.txt        # Závislosti
+└── LICENSE
+```
 
 ## Jak spustit
 
-1. Naklonujte repozitář a přejděte do složky projektu:
-   ```
-   git clone https://github.com/jahodadev/Zenith.git
-   cd Zenith
-   ```
+### 1. Klonování repozitáře
 
-2. Vytvořte a aktivujte virtuální prostředí:
-   ```
-   python -m venv venv
-   ```
-   - **Windows:** `venv\Scripts\activate`
-   - **Linux / macOS:** `source venv/bin/activate`
+```bash
+git clone https://github.com/jahodadev/Zenith.git
+cd Zenith
+```
 
-3. Nainstalujte závislosti:
-   ```
-   pip install .
-   ```
+### 2. Virtuální prostředí
 
-4. Spusťte aplikaci:
-   ```
-   zenith (nebo jako python modul: python -m zenith)
-   ```
+```bash
+python -m venv venv
+```
+
+- **Windows:** `venv\Scripts\activate`
+- **Linux / macOS:** `source venv/bin/activate`
+
+### 3. Instalace závislostí
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Spuštění
+
+```bash
+python -m zenith
+```
+
+Nebo nainstalovat jako balíček a spouštět příkazem `zenith`:
+
+```bash
+pip install .
+zenith
+```
+
+## Nastavení uživatele
+
+Nastavení (téma, zkratky) se ukládají do `~/.zenith/settings.json` a načítají se automaticky při každém spuštění.
