@@ -74,22 +74,15 @@ python -m venv venv
 - **Windows:** `venv\Scripts\activate`
 - **Linux / macOS:** `source venv/bin/activate`
 
-### 3. Instalace závislostí
+### 3. Instalace
 
 ```bash
-pip install -r requirements.txt
+pip install .
 ```
 
 ### 4. Spuštění
 
 ```bash
-python -m zenith
-```
-
-Nebo nainstalovat jako balíček a spouštět příkazem `zenith`:
-
-```bash
-pip install .
 zenith
 ```
 
