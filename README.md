@@ -83,8 +83,10 @@ pip install .
 ### 4. Spuštění
 
 ```bash
-zenith
+python -m zenith
 ```
+
+> Na Windows musí být virtuální prostředí aktivováno (`venv\Scripts\activate`) v každém novém terminálu. Příkaz `zenith` pak funguje také, ale `python -m zenith` je spolehlivější alternativa.
 
 ## Nastavení uživatele
 
