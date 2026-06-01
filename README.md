@@ -58,6 +58,8 @@ editor-va/
 
 ### 1. Klonování repozitáře
 
+> Pokud již repozitář máte naklonovaný, tento krok přeskočte a přejděte do složky projektu.
+
 ```bash
 git clone https://github.com/jahodadev/Zenith.git
 cd Zenith
