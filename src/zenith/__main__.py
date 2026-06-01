@@ -32,11 +32,16 @@ class EditorArea(QWidget):
         self.editors: list[Editor] = []
         self._currentShortcuts: dict[str, str] | None = None
         self._currentTheme: dict[str, str] | None = None
+        self._lastActiveEditor: Editor | None = None
         self.addEditor()
 
     def addEditor(self) -> Editor:
         """Přidá nový panel editoru a rovnoměrně rozdělí dostupný prostor."""
         editor = Editor()
+        editor.textEdit.focusInEvent = lambda e, ed=editor: (
+            setattr(self, '_lastActiveEditor', ed),
+            type(editor.textEdit).focusInEvent(editor.textEdit, e)
+        )
         self.editors.append(editor)
         self.splitter.addWidget(editor)
         if self._currentShortcuts:
@@ -82,10 +87,12 @@ class EditorArea(QWidget):
             editor.applyTheme(theme)
 
     def _getActiveEditor(self) -> Editor | None:
-        """Vrátí editor s fokusem, nebo první v seznamu. Pokud žádný není, vrátí None."""
+        """Vrátí editor s fokusem, naposledy aktivní, nebo první v seznamu."""
         for editor in self.editors:
             if editor.textEdit.hasFocus():
                 return editor
+        if self._lastActiveEditor in self.editors:
+            return self._lastActiveEditor
         if self.editors:
             return self.editors[0]
         return None
