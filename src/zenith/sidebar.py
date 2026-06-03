@@ -73,31 +73,31 @@ class Sidebar(QWidget):
         """
 
         baseDir = os.path.dirname(os.path.abspath(__file__))
-        iconsDir = os.path.join(baseDir, "icons")
+        self._iconsDir = os.path.join(baseDir, "icons")
 
         self.newFileButton = QPushButton()
-        self.newFileButton.setIcon(createColoredIcon(os.path.join(iconsDir, "new-document.png")))
+        self.newFileButton.setIcon(createColoredIcon(os.path.join(self._iconsDir, "new-document.png")))
         self.newFileButton.setIconSize(QSize(16, 16))
         self.newFileButton.setFixedSize(22, 22)
         self.newFileButton.setToolTip("New File")
         self.newFileButton.setStyleSheet(iconStyle)
 
         self.openFolderButton = QPushButton()
-        self.openFolderButton.setIcon(createColoredIcon(os.path.join(iconsDir, "folder.png")))
+        self.openFolderButton.setIcon(createColoredIcon(os.path.join(self._iconsDir, "folder.png")))
         self.openFolderButton.setIconSize(QSize(16, 16))
         self.openFolderButton.setFixedSize(22, 22)
         self.openFolderButton.setToolTip("Open Folder")
         self.openFolderButton.setStyleSheet(iconStyle)
 
         self.saveFileButton = QPushButton()
-        self.saveFileButton.setIcon(createColoredIcon(os.path.join(iconsDir, "diskette.png")))
+        self.saveFileButton.setIcon(createColoredIcon(os.path.join(self._iconsDir, "diskette.png")))
         self.saveFileButton.setIconSize(QSize(16, 16))
         self.saveFileButton.setFixedSize(22, 22)
         self.saveFileButton.setToolTip("Save File")
         self.saveFileButton.setStyleSheet(iconStyle)
 
         self.settingsButton = QPushButton()
-        self.settingsButton.setIcon(createColoredIcon(os.path.join(iconsDir, "settings.png")))
+        self.settingsButton.setIcon(createColoredIcon(os.path.join(self._iconsDir, "settings.png")))
         self.settingsButton.setIconSize(QSize(16, 16))
         self.settingsButton.setFixedSize(22, 22)
         self.settingsButton.setToolTip("Settings")
@@ -142,6 +142,32 @@ class Sidebar(QWidget):
         self.settingsButton.clicked.connect(self.settingsClicked.emit)
 
         self.layout.addWidget(self.tree)
+
+    def applyTheme(self, theme: dict) -> None:
+        """Přebarví ikony tlačítek podle aktuálního motivu."""
+        color = theme["line_number_fg"]
+        iconStyle = f"""
+            QPushButton {{
+                background: transparent;
+                border: none;
+                border-radius: 4px;
+                padding: 2px;
+            }}
+            QPushButton:hover {{
+                background-color: {theme["selection"]};
+            }}
+            QPushButton:pressed {{
+                background-color: {theme["comment"]};
+            }}
+        """
+        for button, filename in [
+            (self.newFileButton, "new-document.png"),
+            (self.openFolderButton, "folder.png"),
+            (self.saveFileButton, "diskette.png"),
+            (self.settingsButton, "settings.png"),
+        ]:
+            button.setIcon(createColoredIcon(os.path.join(self._iconsDir, filename), color))
+            button.setStyleSheet(iconStyle)
 
     def onDoubleClick(self, index: QModelIndex) -> None:
         filePath = self.model.filePath(index)

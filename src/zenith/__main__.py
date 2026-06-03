@@ -152,6 +152,7 @@ class MainWindow(QMainWindow):
         themeKey = self.settings.get("theme")
         theme = THEMES.get(themeKey, THEMES["dracula"])
         self.editorArea.applyTheme(theme)
+        self.sidebar.applyTheme(theme)
         self.sidebar.setStyleSheet(
             f"background-color: {theme['sidebar_bg']}; color: {theme['foreground']};"
         )
